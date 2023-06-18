@@ -20,9 +20,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
-
-    private final ItemService itemService;
     private static final String USER_ID_HEADER = "X-Sharer-User-Id";
+    private final ItemService itemService;
 
     @PostMapping
     public ItemDto saveItem(@RequestBody @Valid ItemDto itemDto,
@@ -47,7 +46,7 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getItemsByUser(@RequestHeader(name = USER_ID_HEADER) long userId) {
-        log.info("Получен GET-запрос: список всех вещей одного пользователя {} ", userId);
+        log.info("Получен GET-запрос: список всех предметов одного пользователя {} ", userId);
         return itemService.getItemsByUser(userId);
     }
 

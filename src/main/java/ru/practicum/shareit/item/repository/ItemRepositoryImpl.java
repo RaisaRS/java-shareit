@@ -31,6 +31,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item updateItem(long ownerId, Item item) {
         Item updateItem = items.get(item.getId());
         if (!updateItem.getOwnerId().equals(ownerId)) {
+            log.warn("Владелец вещи не найден: {} ", ownerId);
             throw new UserNotFoundException("Владелец вещи не найден " + ownerId);
         }
 

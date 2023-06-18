@@ -14,13 +14,9 @@ import ru.practicum.shareit.request.ItemRequest;
 @Builder
 public class Item {
     private Long id;
-
     private String name;
-
     private String description;
-
     private Long ownerId;
-
     private Boolean available;
     private ItemRequest request;
 }
