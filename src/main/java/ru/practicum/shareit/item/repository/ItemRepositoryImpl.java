@@ -24,6 +24,7 @@ public class ItemRepositoryImpl implements ItemRepository {
             throw new ValidationException("Ошибка валидации" + item.getAvailable());
         item.setId(++id);
         items.put(item.getId(), item);
+        log.info("{}", item);
         return item;
     }
 
@@ -44,22 +45,26 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (Objects.nonNull(item.getAvailable())) {
             updateItem.setAvailable(item.getAvailable());
         }
+        log.info("{} {}", item, ownerId);
         return updateItem;
     }
 
 
     @Override
     public Item getItemById(Long itemId) {
+        log.info("{}", itemId);
         return items.get(itemId);
     }
 
     @Override
     public Collection<Item> getAllItems() {
+        log.info("Получение списка всех предметов");
         return new ArrayList<>(items.values());
     }
 
     @Override
     public List<Item> getAllItemsByUser(long userId) {
+        log.info("Получение списка всех предметов, принадлежащих пользователю, id = {}", userId);
         return items.values().stream()
                 .filter(item -> item.getOwnerId().equals(userId))
                 .collect(Collectors.toList());
@@ -67,6 +72,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Collection<Item> searchItem(String text) {
+        log.info("Выполнение поиска среди предметов по: {}", text);
         return items.values().stream()
                 .filter(i -> i.getDescription().toLowerCase().contains(text.toLowerCase()))
                 .filter(Item::getAvailable)
@@ -75,6 +81,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public void deleteItemById(Long itemId) {
+        log.info("Удаление предмета, id = {}", itemId);
         items.remove(itemId);
     }
 }
