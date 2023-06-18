@@ -25,10 +25,11 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User saveUser(User user) {
         if (users.values().stream().map(User::getEmail).anyMatch(s -> s.equals(user.getEmail())))
-            throw new ConflictException("Пользователь с таким email уже существует" + user.getEmail());
+            throw new ConflictException("Пользователь с таким email уже существует: " + user.getEmail());
         ++id;
         user.setId(id);
         users.put(user.getId(), user);
+        log.info("Пользователь создан, {}", user);
         return user;
     }
 
@@ -39,23 +40,27 @@ public class UserRepositoryImpl implements UserRepository {
         if (user.getEmail() != null)
             if (users.values().stream().filter(u -> u.getId() != user.getId()).anyMatch(u ->
                     u.getEmail().equals(user.getEmail())))
-                throw new ConflictException("Пользователь с таким email уже существует" + user.getEmail());
+                throw new ConflictException("Пользователь с таким email уже существует: " + user.getEmail());
             else
                 users.get(user.getId()).setEmail(user.getEmail());
+        log.info("Обновление данных пользователя: {} успешно", user);
         return users.get(user.getId());
     }
 
     @Override
     public User deleteUser(long userId) {
         checkUser(userId, "Пользователь не найден");
+        log.info("Удаление пользователя, id = {}", userId);
         return users.remove(userId);
     }
 
     @Override
     public User getUserById(long id) {
         if (users.containsKey(id)) {
+            log.info("Получение пользователя по id = {}", id);
             return users.get(id);
         } else {
+            log.warn("Пользователь не найден, id = {}", id);
             throw new UserNotFoundException("Пользователь не найден id = " + id);
         }
     }
