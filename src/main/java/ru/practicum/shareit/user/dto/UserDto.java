@@ -14,7 +14,7 @@ public class UserDto {
     private long id;
     @NotBlank
     private String name;
-    @NotBlank
+    //@NotBlank
     @Email
     private String email;
 }

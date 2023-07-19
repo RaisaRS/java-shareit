@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exceptions.ConflictException;
-import ru.practicum.shareit.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.exceptions.UserNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.exceptions.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -28,6 +25,27 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInСorrectBookingException(final InCorrectBookingException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Ошибка бронирования");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInCorrectDateException(final InCorrectDateException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Некорректная дата бронирования");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInCorrectStatusException(final InCorrectStatusException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Некорректный статус бронирования");
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(final UserNotFoundException e) {
         log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
@@ -39,6 +57,13 @@ public class ErrorHandler {
     public ErrorResponse handleItemNotFoundException(final ItemNotFoundException e) {
         log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage(), "Вещь не найдена.");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleBookingNotFoundException(final BookingNotFoundException e) {
+        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Бронирование не найдено.");
     }
 
     @ExceptionHandler
