@@ -6,7 +6,6 @@ import lombok.Data;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 
@@ -19,4 +18,5 @@ public class CommentDto {
     private String text;
     private User author;
     private LocalDateTime created;
+    private String authorName;
 }

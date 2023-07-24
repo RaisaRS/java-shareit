@@ -6,7 +6,6 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -23,7 +22,7 @@ public class Comment {
     @ToString.Exclude
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     @JoinColumn(name = "author_id", nullable = false)
     private User author;

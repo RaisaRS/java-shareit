@@ -24,7 +24,7 @@ public class User {
     @NotBlank
     @Column(name = "user_name")
     private String name;
-    @NotBlank
+    @NotBlank(message = "Email не должен быть пустым")
     @Email
     @Column(name = "email")
     private String email;

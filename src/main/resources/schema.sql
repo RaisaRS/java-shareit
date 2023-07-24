@@ -12,14 +12,14 @@ create table IF NOT EXISTS USERS
 create table IF NOT EXISTS ITEMS
 (
     ITEM_ID      BIGINT auto_increment,
-    ITEM_NAME    CHARACTER VARYING(255)  not null,
-    DESCRIPTION  CHARACTER VARYING(1012) not null,
+    ITEM_NAME    VARCHAR(255)  not null,
+    DESCRIPTION  VARCHAR(1012) not null,
     IS_AVAILABLE BOOLEAN,
     OWNER_ID     BIGINT                  not null,
     constraint "ITEMS_pk"
         primary key (ITEM_ID),
     constraint "ITEMS_USERS_ID_fk"
-        foreign key (OWNER_ID) references USERS
+        foreign key (OWNER_ID) references USERS(USER_ID)
             on delete cascade
 );
 
@@ -30,25 +30,24 @@ create table IF NOT EXISTS BOOKINGS
     END_DATE   TIMESTAMP,
     ITEM_ID    BIGINT not null,
     BOOKER_ID  BIGINT not null,
-    STATUS     CHARACTER VARYING(50),
-    STATE      CHARACTER VARYING(50),
+    STATUS     VARCHAR(8) not null,
     constraint "BOOKINGS_pk"
         primary key (BOOKING_ID),
     constraint "BOOKINGS_ITEMS_ID_fk"
-        foreign key (ITEM_ID) references ITEMS,
+        foreign key (ITEM_ID) references ITEMS(ITEM_ID),
     constraint "BOOKINGS_USERS_ID_fk"
-        foreign key (BOOKER_ID) references USERS
+        foreign key (BOOKER_ID) references USERS(USER_ID)
 );
 
 create table IF NOT EXISTS REQUESTS
 (
     REQUEST_ID   BIGINT auto_increment,
-    DESCRIPTION  CHARACTER VARYING(1000) not null,
+    DESCRIPTION  VARCHAR(1000) not null,
     REQUESTOR_ID BIGINT                  not null,
     constraint "REQUESTS_pk"
         primary key (REQUEST_ID),
     constraint "REQUESTS_USERS_ID_fk"
-        foreign key (REQUESTOR_ID) references USERS
+        foreign key (REQUESTOR_ID) references USERS(USER_ID)
 );
 
 create table IF NOT EXISTS COMMENTS
@@ -61,7 +60,7 @@ create table IF NOT EXISTS COMMENTS
     constraint "COMMENTS_pk"
         primary key (COMMENT_ID),
     constraint "COMMENTS_ITEMS_ID_fk"
-        foreign key (ITEM_ID) references ITEMS,
+        foreign key (ITEM_ID) references ITEMS(ITEM_ID),
     constraint "COMMENTS_USERS_ID_fk"
-        foreign key (AUTHOR_ID) references USERS
+        foreign key (AUTHOR_ID) references USERS(USER_ID)
 );

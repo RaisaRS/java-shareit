@@ -1,8 +1,7 @@
 package ru.practicum.shareit.booking.model;
 
 import lombok.*;
-import ru.practicum.shareit.booking.Status;
-import ru.practicum.shareit.booking.service.State;
+import ru.practicum.shareit.booking.service.Status;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -30,18 +29,15 @@ public class Booking {
     @Column(name = "end_date")
     @Future
     private LocalDateTime end;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "item_id", nullable = false)
     private Item item;
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @JoinColumn(name = "booker_id")
+    @JoinColumn(name = "booker_id", nullable = false)
     private User booker;
-    @Column(name = "status")
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
-    @Column(name = "state")
-    @Enumerated(EnumType.STRING)
-    private State state;
 }

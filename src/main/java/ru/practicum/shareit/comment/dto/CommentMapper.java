@@ -1,15 +1,10 @@
-package ru.practicum.shareit.comment;
+package ru.practicum.shareit.comment.dto;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @UtilityClass
@@ -20,6 +15,7 @@ public class CommentMapper {
                 .author(comment.getAuthor())
                 .text(comment.getText())
                 .created(comment.getCreated())
+                .authorName(comment.getAuthor().getName())
                 .build();
     }
 
@@ -29,6 +25,6 @@ public class CommentMapper {
         comment.setText(commentDto.getText());
         comment.setItem(item);
         comment.setCreated(created);
-       return comment;
+        return comment;
     }
 }

@@ -44,9 +44,10 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@PathVariable Long itemId) {
+    public ItemDto getItemById(@RequestHeader(name = USER_ID_HEADER) long userId,
+                                @PathVariable Long itemId) {
         log.info("Получен GET-запрос /itemId {} ", itemId);
-        return itemService.getItemById(itemId);
+        return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
@@ -77,7 +78,7 @@ public class ItemController {
     @DeleteMapping("/{itemId}")
     public void deleteItem(@RequestHeader(name = USER_ID_HEADER) long userId,
                            @PathVariable long itemId) {
-        log.info("Получен DELETE- запрос на уаление вещи {} ", itemId);
+        log.info("Получен DELETE- запрос на уаление предмета {} ", itemId);
         itemService.deleteItemById(userId, itemId);
     }
 }

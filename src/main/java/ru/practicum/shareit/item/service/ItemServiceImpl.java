@@ -5,11 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.booking.service.State;
-import ru.practicum.shareit.comment.CommentMapper;
+import ru.practicum.shareit.booking.service.Status;
+import ru.practicum.shareit.comment.dto.CommentMapper;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
+import ru.practicum.shareit.exceptions.CommentNotAuthorNotBookingException;
 import ru.practicum.shareit.exceptions.InCorrectBookingException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
@@ -20,8 +21,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import javax.persistence.EntityManager;
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +29,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.booking.dto.BookingMapper.toBookingDtoShort;
-import static ru.practicum.shareit.comment.CommentMapper.toCommentDto;
+import static ru.practicum.shareit.comment.dto.CommentMapper.toCommentDto;
 import static ru.practicum.shareit.item.dto.ItemMapper.toItem;
 import static ru.practicum.shareit.item.dto.ItemMapper.toItemDto;
 
@@ -39,7 +38,6 @@ import static ru.practicum.shareit.item.dto.ItemMapper.toItemDto;
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
-    //private final EntityManager entityManager;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
@@ -50,8 +48,6 @@ public class ItemServiceImpl implements ItemService {
         User user = userRepository.findById(userId).orElseThrow(()->
                 new UserNotFoundException("Пользователь не найден " + userId));
         Item item = toItem(user, itemDto);
-//        Connection connection = (Connection) entityManager.unwrap(java.sql.Connection.class);
-//        log.info(entityManager.getProperties().toString());
         log.info("Добавлен предмет {}, владелец: id = {}", itemDto, userId);
         return itemRepository.save(item);
     }
@@ -79,12 +75,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto getItemById(long itemId) {
+    public ItemDto getItemById(long userId, Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ItemNotFoundException("Предмет не найден " + itemId));
         List<Comment> comments= commentRepository.findAllByItemId(itemId);
         ItemDto itemDto = toItemDto(item);
-        addLastAndNextDateTimeForBookingToItem(itemDto);
+        if (item.getOwnerId().equals(userId)) {
+            addLastAndNextDateTimeForBookingToItem(itemDto);
+        }
         itemDto.setComments(comments.stream()
                 .map(CommentMapper::toCommentDto)
                 .collect(Collectors.toList()));
@@ -122,6 +120,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto postComment(long userId, Long itemId, CommentDto commentDto) {
+        if(commentDto.getText().isEmpty()) {
+            log.debug("Комментарий не может быть пустьм");
+            throw new InCorrectBookingException("Комментарий не может быть пустьм");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(()-> new UserNotFoundException("Пользователь не найден " + userId));
 
@@ -133,22 +135,27 @@ public class ItemServiceImpl implements ItemService {
         Comment comment = CommentMapper.toComment(user, item, commentDto, saveTime);
 
         Booking booking = bookingRepository
-                .findFirstBookingByItemIdAndEndIsBeforeAndStateNotLikeOrderByEndDesc(itemId, saveTime, State.REJECTED);
+                .findFirstBookingByItemIdAndEndIsBeforeAndStatusNotLikeOrderByEndDesc(itemId, saveTime,
+                        Status.REJECTED);
 
         if(booking == null) {
             log.debug("Предмет {} ещё не бронировался, комментарии недоступны ", itemId);
-            throw new InCorrectBookingException("Предмет ещё не бронировался, комментарии недоступны " + itemId);
+            throw new InCorrectBookingException("Предмет ещё не бронировался, комментарии недоступны "
+                    + itemId);
         }
 
         if(booking.getBooker().getId() != userId) {
             log.debug("Пользователь {} ранее не бронировал предмет {}, комментарии недоступны ", userId, itemId);
-            throw new InCorrectBookingException("Пользователь ранее не бронировал предмет, " +
+            throw new CommentNotAuthorNotBookingException("Пользователь ранее не бронировал предмет, " +
                     "комментарии недоступны " + userId + itemId);
         }
+        comment.setAuthor(user);
+        comment.setItem(item);
+        comment.setCreated(saveTime);
 
-        Comment newComment = commentRepository.save(comment);
+        commentRepository.save(comment);
 
-        return toCommentDto(newComment);
+        return toCommentDto(comment);
     }
 
     @Override
@@ -162,11 +169,11 @@ public class ItemServiceImpl implements ItemService {
         LocalDateTime timeNow = LocalDateTime.now();
 
         Booking next = bookingRepository
-                .findFirstBookingByItemIdAndStartIsAfterAndStateNotLikeOrderByStartAsc(itemDto.getId(),
-                        timeNow, State.REJECTED);
+                .findFirstBookingByItemIdAndStartIsAfterAndStatusNotLikeOrderByStartAsc(itemDto.getId(),
+                        timeNow, Status.REJECTED);
         Booking last = bookingRepository
-                .findFirstBookingByItemIdAndStartIsBeforeAndStateNotLikeOrderByStartDesc(itemDto.getId(),
-                timeNow, State.REJECTED);
+                .findFirstBookingByItemIdAndStartIsBeforeAndStatusNotLikeOrderByStartDesc(itemDto.getId(),
+                timeNow, Status.REJECTED);
 
         if(next != null) {
             itemDto.setNextBooking(toBookingDtoShort(next));

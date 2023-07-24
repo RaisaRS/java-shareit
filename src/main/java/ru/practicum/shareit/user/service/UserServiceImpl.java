@@ -25,8 +25,6 @@ public class UserServiceImpl implements UserService {
     public User saveUser(User user) {
         log.info("Создан пользователь, id = {} ", user);
         return userRepository.save(user);
-//
-//        return UserMapper.toUserDto((userRepository.saveUser(UserMapper.toUser(userDto))));
     }
 
     @Override
@@ -56,5 +54,4 @@ public class UserServiceImpl implements UserService {
         log.info("Получен пользователь, id = {} ", id);
         return user;
     }
-
 }

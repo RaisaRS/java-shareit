@@ -18,6 +18,13 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFoundException(EntityNotFoundException e) {
+        log.error("message");
+        return new ErrorResponse(e.getMessage(), "message");
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException e) {
         log.error("Получен статус 400  {}", e.getMessage(), e);
@@ -26,7 +33,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInСorrectBookingException(final InCorrectBookingException e) {
+    public ErrorResponse handleInCorrectBookingException(final InCorrectBookingException e) {
         log.error("Получен статус 400  {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage(), "Ошибка бронирования");
     }
@@ -40,9 +47,24 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleInCorrectStatusException(final InCorrectStatusException e) {
+    public ErrorResponse handleUnsupportedStateException(final UnsupportedStateException e) {
         log.error("Получен статус 400  {}", e.getMessage(), e);
-        return new ErrorResponse(e.getMessage(), "Некорректный статус бронирования");
+        return new ErrorResponse(e.getMessage(), "Unknown state: UNSUPPORTED_STATUS");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleCommentNotAuthorNotBookingException(final CommentNotAuthorNotBookingException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Комментарии разрешенны только пользователю, " +
+                "бронирующему предмет");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleItemUnavailableException(final ItemUnavailableException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Аренда предмета недоступна");
     }
 
     @ExceptionHandler
@@ -56,7 +78,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleItemNotFoundException(final ItemNotFoundException e) {
         log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
-        return new ErrorResponse(e.getMessage(), "Вещь не найдена.");
+        return new ErrorResponse(e.getMessage(), "Предмет не найден.");
     }
 
     @ExceptionHandler
