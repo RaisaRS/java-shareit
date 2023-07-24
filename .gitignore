@@ -31,4 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
-./db
+*.db
+db/*
+.mvn
+*.DS_Store
+.properties
