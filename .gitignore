@@ -36,3 +36,6 @@ db/*
 .mvn
 *.DS_Store
 .properties
+*.class
+*.jar
+*.DS_Store
