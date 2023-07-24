@@ -38,4 +38,3 @@ db/*
 .properties
 *.class
 *.jar
-*.DS_Store
