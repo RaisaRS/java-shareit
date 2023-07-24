@@ -12,18 +12,21 @@ import java.util.Collection;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
     Booking findFirstBookingByItemIdAndEndIsBeforeAndStatusNotLikeOrderByEndDesc(Long itemId,
-                                                                                LocalDateTime dateTime,
+                                                                                 LocalDateTime dateTime,
                                                                                  Status status);
+
     Booking findFirstBookingByItemIdAndStartIsAfterAndStatusNotLikeOrderByStartAsc(Long itemId,
-                                                                                  LocalDateTime dateTime,
-                                                                                  Status status);
+                                                                                   LocalDateTime dateTime,
+                                                                                   Status status);
 
     Booking findFirstBookingByItemIdAndStartIsBeforeAndStatusNotLikeOrderByStartDesc(Long itemId,
-                                                                                    LocalDateTime dateTime,
+                                                                                     LocalDateTime dateTime,
                                                                                      Status status);
+
     Collection<Booking> getAllByItemOwnerIdAndStatusOrderByStartDesc(long ownerId, Status status);
 
     Collection<Booking> getAllByBookerIdAndStatusOrderByStartDesc(long bookerId, Status status);
+
     @Query("SELECT b FROM Booking AS b JOIN b.booker AS bb" +
             " WHERE bb.id = ?1 ORDER BY b.start DESC")
     Collection<Booking> getBookingListByBookerId(Long bookerId);

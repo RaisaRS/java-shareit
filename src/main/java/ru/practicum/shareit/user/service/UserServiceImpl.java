@@ -18,7 +18,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public Collection<User> getAllUsers() {
         log.info("Получен список всех пользователей");
-        return  userRepository.findAll();
+        return userRepository.findAll();
     }
 
     @Override
@@ -35,12 +35,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
-        User oldUser =userRepository.findById(user.getId()).orElseThrow(()->
+        User oldUser = userRepository.findById(user.getId()).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + user.getId()));
-        if(user.getName() != null) {
+        if (user.getName() != null) {
             oldUser.setName(user.getName());
         }
-        if(user.getEmail() != null) {
+        if (user.getEmail() != null) {
             oldUser.setEmail(user.getEmail());
         }
         log.info("Данные пользователя {} обновлены ", user);
@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserById(long id) {
-        User user = userRepository.findById(id).orElseThrow(()->
+        User user = userRepository.findById(id).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + id));
         log.info("Получен пользователь, id = {} ", id);
         return user;

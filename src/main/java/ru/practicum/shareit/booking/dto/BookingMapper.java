@@ -39,10 +39,10 @@ public class BookingMapper {
         booking.setItem(item);
         booking.setStart(bookingDto.getStart());
         booking.setEnd(bookingDto.getEnd());
-        return  booking;
+        return booking;
     }
 
-    public static BookingDtoForItem toBookingDtoForItem (Booking booking) {
+    public static BookingDtoForItem toBookingDtoForItem(Booking booking) {
         return BookingDtoForItem.builder()
                 .itemId(booking.getItem().getId())
                 .start(booking.getStart())

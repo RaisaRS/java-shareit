@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.dto;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.booking.service.State;
 import ru.practicum.shareit.booking.service.Status;
 
 import javax.validation.constraints.Future;

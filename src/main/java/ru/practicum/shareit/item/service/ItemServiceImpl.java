@@ -6,16 +6,16 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.service.Status;
-import ru.practicum.shareit.comment.dto.CommentMapper;
 import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.comment.dto.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exceptions.CommentNotAuthorNotBookingException;
 import ru.practicum.shareit.exceptions.InCorrectBookingException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
-import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
@@ -45,7 +45,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item saveItem(ItemDto itemDto, long userId) {
-        User user = userRepository.findById(userId).orElseThrow(()->
+        User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + userId));
         Item item = toItem(user, itemDto);
         log.info("Добавлен предмет {}, владелец: id = {}", itemDto, userId);
@@ -56,7 +56,7 @@ public class ItemServiceImpl implements ItemService {
     public Item updateItem(ItemDto itemDto, long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + userId));
-        Item itemUpdate = itemRepository.findById(itemDto.getId()).orElseThrow(()->
+        Item itemUpdate = itemRepository.findById(itemDto.getId()).orElseThrow(() ->
                 new ItemNotFoundException("Предмет не найден " + itemDto.getId()));
         Item item = toItem(user, itemDto);
         itemUpdate.setOwnerId(userId);
@@ -78,7 +78,7 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto getItemById(long userId, Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ItemNotFoundException("Предмет не найден " + itemId));
-        List<Comment> comments= commentRepository.findAllByItemId(itemId);
+        List<Comment> comments = commentRepository.findAllByItemId(itemId);
         ItemDto itemDto = toItemDto(item);
         if (item.getOwnerId().equals(userId)) {
             addLastAndNextDateTimeForBookingToItem(itemDto);
@@ -92,18 +92,18 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getItemsByUser(long userId) {
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             log.debug("Пользователь {} не найден", userId);
             throw new UserNotFoundException("Пользователь не найден " + userId);
         }
-        if(itemRepository.findAllByOwnerId(userId) == null) {
+        if (itemRepository.findAllByOwnerId(userId) == null) {
             log.info("У пользователя {} нет предметов для аренды ", userId);
             throw new ItemNotFoundException("У пользователя нет предметов для аренды " + userId);
         }
         List<ItemDto> itemsList = itemRepository.findAllByOwnerId(userId)
-                        .stream()
-                        .map(ItemMapper::toItemDto)
-                        .collect(Collectors.toList());
+                .stream()
+                .map(ItemMapper::toItemDto)
+                .collect(Collectors.toList());
         itemsList.forEach(this::addLastAndNextDateTimeForBookingToItem);
         log.info("Список всех предметов, принадлежащих пользователю, id = {}", userId);
         return itemsList;
@@ -111,7 +111,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Collection<Item> searchItem(String text) {
-        if(text.isEmpty()) {
+        if (text.isEmpty()) {
             return Collections.emptyList();
         }
         log.info("Выполнен поиск среди предметов по : {}.", text);
@@ -120,15 +120,15 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentDto postComment(long userId, Long itemId, CommentDto commentDto) {
-        if(commentDto.getText().isEmpty()) {
+        if (commentDto.getText().isEmpty()) {
             log.debug("Комментарий не может быть пустьм");
             throw new InCorrectBookingException("Комментарий не может быть пустьм");
         }
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new UserNotFoundException("Пользователь не найден " + userId));
+                .orElseThrow(() -> new UserNotFoundException("Пользователь не найден " + userId));
 
         Item item = itemRepository.findById(itemId)
-                .orElseThrow(()-> new ItemNotFoundException("Предмет не найден " + itemId));
+                .orElseThrow(() -> new ItemNotFoundException("Предмет не найден " + itemId));
 
         LocalDateTime saveTime = LocalDateTime.now();
 
@@ -138,13 +138,13 @@ public class ItemServiceImpl implements ItemService {
                 .findFirstBookingByItemIdAndEndIsBeforeAndStatusNotLikeOrderByEndDesc(itemId, saveTime,
                         Status.REJECTED);
 
-        if(booking == null) {
+        if (booking == null) {
             log.debug("Предмет {} ещё не бронировался, комментарии недоступны ", itemId);
             throw new InCorrectBookingException("Предмет ещё не бронировался, комментарии недоступны "
                     + itemId);
         }
 
-        if(booking.getBooker().getId() != userId) {
+        if (booking.getBooker().getId() != userId) {
             log.debug("Пользователь {} ранее не бронировал предмет {}, комментарии недоступны ", userId, itemId);
             throw new CommentNotAuthorNotBookingException("Пользователь ранее не бронировал предмет, " +
                     "комментарии недоступны " + userId + itemId);
@@ -173,15 +173,15 @@ public class ItemServiceImpl implements ItemService {
                         timeNow, Status.REJECTED);
         Booking last = bookingRepository
                 .findFirstBookingByItemIdAndStartIsBeforeAndStatusNotLikeOrderByStartDesc(itemDto.getId(),
-                timeNow, Status.REJECTED);
+                        timeNow, Status.REJECTED);
 
-        if(next != null) {
+        if (next != null) {
             itemDto.setNextBooking(toBookingDtoShort(next));
         } else {
             itemDto.setNextBooking(null);
         }
 
-        if(last != null) {
+        if (last != null) {
             itemDto.setLastBooking(toBookingDtoShort(last));
         } else {
             itemDto.setLastBooking(null);

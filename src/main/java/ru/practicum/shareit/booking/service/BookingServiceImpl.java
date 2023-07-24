@@ -13,7 +13,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-
 import java.time.LocalDateTime;
 import java.util.Collection;
 
@@ -34,24 +33,24 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto saveBooking(long userId, BookingDto bookingDto) {
-        User user = userRepository.findById(userId).orElseThrow(()->
+        User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + userId));
-        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(()->
+        Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() ->
                 new ItemNotFoundException("Предмет не найден."));
 
         Booking booking = toBooking(user, item, bookingDto);
 
-        if(!booking.getEnd().isAfter(booking.getStart())) {
+        if (!booking.getEnd().isAfter(booking.getStart())) {
             log.debug("Некорректная дата бронировния");
             throw new InCorrectDateException("Некорректная дата бронировния");
         }
 
-        if((booking.getItem().getOwnerId()).equals(booking.getBooker().getId())) {
+        if ((booking.getItem().getOwnerId()).equals(booking.getBooker().getId())) {
             log.debug("Попытка бронирования своего же предмета отклонена");
             throw new ItemNotFoundException("Бронь своего предмета: " + booking.getItem());
         }
 
-        if(!booking.getItem().getAvailable()) {
+        if (!booking.getItem().getAvailable()) {
             log.debug("В данный момент предмет: {} не может быть забронирован. ", booking.getItem());
             throw new ItemUnavailableException("Предмет недоступен для аренды в данный момент: "
                     + booking.getItem());
@@ -72,23 +71,23 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException("Бронирование не найдено"));
 
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             log.debug("Пользователь {} не найден ", userId);
             throw new UserNotFoundException("Пользователь не найден " + userId);
         }
 
-        if(booking.getStatus() == Status.APPROVED) {
+        if (booking.getStatus() == Status.APPROVED) {
             log.debug("Бронирование уже подтверждено ранее");
             throw new UnsupportedStateException("Unknown state: UNSUPPORTED_STATUS");
         }
 
-        if(booking.getItem().getOwnerId() != userId) {
+        if (booking.getItem().getOwnerId() != userId) {
             log.debug("Подтвердить/отклонить бронирование может только владелец предмета");
             throw new BookingNotFoundException("Подтвердить/отклонить бронирование может только " +
                     "владелец предмета - " + userId);
         }
 
-        if(approved) {
+        if (approved) {
             booking.setStatus(Status.APPROVED);
         } else {
             booking.setStatus(Status.REJECTED);
@@ -103,18 +102,18 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException("Бронирование не найдено"));
 
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             log.debug("Пользователь {} не найден ", userId);
             throw new UserNotFoundException("Пользователь не найден " + userId);
         }
 
-        if(booking.getItem().getOwnerId() != userId && booking.getBooker().getId() != userId) {
+        if (booking.getItem().getOwnerId() != userId && booking.getBooker().getId() != userId) {
             log.debug("Просмотр бронирования доступен только владельцу предмета или его арендатору");
             throw new BookingNotFoundException("Просмотр бронирования доступен только владельцу предмета" +
                     " или его арендатору");
         }
 
-        if(!booking.getItem().getAvailable()) {
+        if (!booking.getItem().getAvailable()) {
             log.debug("Предмет недоступен для бронирования в данный момент");
             throw new ItemUnavailableException("Предмет недоступен для бронирования в данный момент");
         }
@@ -125,7 +124,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional(readOnly = true)
     public Collection<Booking> getAllBookingsForUser(long userId, String state, boolean isOwner) {
-        if(!userRepository.existsById(userId)) {
+        if (!userRepository.existsById(userId)) {
             log.debug("Пользователь {} не найден ", userId);
             throw new UserNotFoundException("Пользователь не найден " + userId);
         }
@@ -134,13 +133,13 @@ public class BookingServiceImpl implements BookingService {
 
         switch (state) {
             case "ALL":
-                if(isOwner) {
+                if (isOwner) {
                     return bookingRepository.getBookingListByOwnerId(userId);
                 } else {
                     return bookingRepository.getBookingListByBookerId(userId);
                 }
             case "REJECTED":
-                if(isOwner) {
+                if (isOwner) {
                     return bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
                 } else {
                     return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);

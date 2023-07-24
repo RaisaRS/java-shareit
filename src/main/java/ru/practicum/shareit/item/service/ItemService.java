@@ -17,6 +17,7 @@ public interface ItemService {
     List<ItemDto> getItemsByUser(long userId);
 
     Collection<Item> searchItem(String text);
+
     CommentDto postComment(long userId, Long itemId, CommentDto commentDto);
 
     void deleteItemById(long userId, Long itemId);
