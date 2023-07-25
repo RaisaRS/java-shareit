@@ -1,8 +1,6 @@
 package ru.practicum.shareit.request.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -12,7 +10,9 @@ import java.time.LocalDate;
  * TODO Sprint add-item-requests.
  */
 @Entity
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(exclude = {"id"})
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "requests")

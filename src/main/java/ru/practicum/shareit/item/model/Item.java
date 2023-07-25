@@ -1,7 +1,8 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -10,8 +11,9 @@ import javax.persistence.*;
  * TODO Sprint add-controllers.
  */
 @Entity
-@Data
 @Getter
+@Setter
+@EqualsAndHashCode(exclude = {"id"})
 @Table(name = "items")
 public class Item {
     @Id
@@ -26,7 +28,4 @@ public class Item {
     private Long ownerId;
     @Column(name = "is_available")
     private Boolean available;
-//    @JoinColumn(name = "request", nullable = false)
-//    @ToString.Exclude
-//    private ItemRequest request;
 }
