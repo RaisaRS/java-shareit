@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exceptions.ConflictException;
-import ru.practicum.shareit.exceptions.ItemNotFoundException;
-import ru.practicum.shareit.exceptions.UserNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
+import ru.practicum.shareit.exceptions.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -21,10 +18,53 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFoundException(EntityNotFoundException e) {
+        log.error("message");
+        return new ErrorResponse(e.getMessage(), "message");
+    }
+
+    @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidationException(final ValidationException e) {
         log.error("Получен статус 400  {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage(), "Ошибка валидациии");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInCorrectBookingException(final InCorrectBookingException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Ошибка бронирования");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInCorrectDateException(final InCorrectDateException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Некорректная дата бронирования");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUnsupportedStateException(final UnsupportedStateException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Unknown state: UNSUPPORTED_STATUS");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleCommentNotAuthorNotBookingException(final CommentNotAuthorNotBookingException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Комментарии разрешенны только пользователю, " +
+                "бронирующему предмет");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleItemUnavailableException(final ItemUnavailableException e) {
+        log.error("Получен статус 400  {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Аренда предмета недоступна");
     }
 
     @ExceptionHandler
@@ -38,7 +78,14 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleItemNotFoundException(final ItemNotFoundException e) {
         log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
-        return new ErrorResponse(e.getMessage(), "Вещь не найдена.");
+        return new ErrorResponse(e.getMessage(), "Предмет не найден.");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleBookingNotFoundException(final BookingNotFoundException e) {
+        log.debug("Получен статус 404 Not found {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Бронирование не найдено.");
     }
 
     @ExceptionHandler

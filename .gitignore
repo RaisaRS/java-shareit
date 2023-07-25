@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+*.db
+db/*
+.mvn
+*.DS_Store
+.properties
+*.class
+*.jar

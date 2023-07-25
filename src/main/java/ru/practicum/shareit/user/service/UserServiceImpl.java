@@ -3,51 +3,55 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.user.UserMapper;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
-
     private final UserRepository userRepository;
 
     @Override
-    public Collection<UserDto> getAllUsers() {
-        Collection<User> allUsers = userRepository.getAllUsers();
+    public Collection<User> getAllUsers() {
         log.info("Получен список всех пользователей");
-        return allUsers.stream()
-                .map(UserMapper::toUserDto)
-                .collect(Collectors.toList());
+        return userRepository.findAll();
     }
 
     @Override
-    public UserDto saveUser(UserDto userDto) {
-        log.info("Создан пользователь, id = {} ", userDto);
-        return UserMapper.toUserDto((userRepository.saveUser(UserMapper.toUser(userDto))));
+    public User saveUser(User user) {
+        log.info("Создан пользователь, id = {} ", user);
+        return userRepository.save(user);
     }
 
     @Override
-    public void deleteUser(long userId) {
-        log.info("Удалён пользователь, id = {} ", userId);
-        userRepository.deleteUser(userId);
+    public void deleteUser(long id) {
+        log.info("Удалён пользователь, id = {} ", id);
+        userRepository.deleteById(id);
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
-        log.info("Данные пользователя {} обновлены ", userDto);
-        return UserMapper.toUserDto(userRepository.updateUser(UserMapper.toUser(userDto)));
+    public User updateUser(User user) {
+        User oldUser = userRepository.findById(user.getId()).orElseThrow(() ->
+                new UserNotFoundException("Пользователь не найден " + user.getId()));
+        if (user.getName() != null) {
+            oldUser.setName(user.getName());
+        }
+        if (user.getEmail() != null) {
+            oldUser.setEmail(user.getEmail());
+        }
+        log.info("Данные пользователя {} обновлены ", user);
+        return userRepository.save(oldUser);
     }
 
     @Override
-    public User getUserById(long userId) {
-        log.info("Получен пользователь, id = {} ", userId);
-        return userRepository.getUserById(userId);
+    public User getUserById(long id) {
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new UserNotFoundException("Пользователь не найден " + id));
+        log.info("Получен пользователь, id = {} ", id);
+        return user;
     }
 }
