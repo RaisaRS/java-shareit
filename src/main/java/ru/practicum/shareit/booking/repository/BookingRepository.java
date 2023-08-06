@@ -28,41 +28,41 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
 
     List<Booking> getAllByBookerIdAndStatusOrderByStartDesc(Long bookerId, Status status, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.booker AS bb" +
+    @Query("SELECT b FROM Booking b JOIN b.booker bb" +
             " WHERE bb.id = ?1 ORDER BY b.start DESC")
     List<Booking> getBookingListByBookerId(Long bookerId, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.item AS i " +
+    @Query("SELECT b FROM Booking b JOIN b.item i " +
             "WHERE i.ownerId = ?1 " +
             "ORDER BY b.start DESC")
     List<Booking> getBookingListByOwnerId(Long ownerId, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.item AS i " +
+    @Query("SELECT b FROM Booking b JOIN b.item i " +
             "WHERE i.ownerId = ?1 AND (b.end < ?2) " +
             "ORDER BY b.start DESC")
     List<Booking> getAllPastBookingsByOwner(Long ownerId, LocalDateTime time, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.item AS i " +
+    @Query("SELECT b FROM Booking b JOIN b.item i " +
             " WHERE i.ownerId = ?1 AND(b.end > ?2) " +
             "ORDER BY b.start DESC")
     List<Booking> getAllFutureBookingsByOwner(Long ownerId, LocalDateTime time, Pageable pageable);
 
-    @Query("SELECT b FROM Booking  AS b JOIN b.booker AS bb" +
+    @Query("SELECT b FROM Booking b JOIN b.booker bb" +
             " WHERE bb.id = ?1 AND (b.end < ?2) " +
             "ORDER BY b.start DESC")
     List<Booking> getAllPastBookingsByBooker(Long bookerId, LocalDateTime timeNow, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.booker AS bb " +
+    @Query("SELECT b FROM Booking b JOIN b.booker bb " +
             "WHERE bb.id = ?1 AND (b.end > ?2) " +
             "ORDER BY b.start DESC")
     List<Booking> getAllFutureBookingsByBooker(Long bookerId, LocalDateTime timeNow, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.booker AS bb " +
+    @Query("SELECT b FROM Booking b JOIN b.booker bb " +
             "WHERE bb.id = ?1 AND (b.start <= ?2 AND b.end >= ?2)" +
             " ORDER BY b.start DESC")
     List<Booking> getAllCurrentBookingsByBooker(Long bookerId, LocalDateTime timeNow, LocalDateTime now1, Pageable pageable);
 
-    @Query("SELECT b FROM Booking  AS b JOIN b.item AS i WHERE i.ownerId = ?1 " +
+    @Query("SELECT b FROM Booking b JOIN b.item i WHERE i.ownerId = ?1 " +
             "AND (b.start <= ?2 AND b.end >= ?2) " +
             "ORDER BY b.start DESC")
     List<Booking> getAllCurrentBookingsByOwner(Long ownerId, LocalDateTime timeNow, LocalDateTime now1, Pageable pageable);
