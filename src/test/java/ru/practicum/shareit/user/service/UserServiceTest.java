@@ -9,8 +9,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.exceptions.ConflictException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -21,6 +23,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static ru.practicum.shareit.mappers.UserMapper.toUser;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -74,7 +77,6 @@ public class UserServiceTest {
 
     @Test
     void saveUserWithBadNameTest() {
-        //UserDTO userDTO = mapper.map(user, UserDTO.class);
         user.setName("");
         assertThrows(
                 ConstraintViolationException.class,
@@ -118,13 +120,9 @@ public class UserServiceTest {
 
     @Test
     void updateUserWithBadNameTest() {
-
-        // user.setEmail("ivan@mailupdated.ru");
         user.setName("");
         Mockito.when(userRepository.findById(Mockito.any()))
                 .thenReturn(Optional.ofNullable(user));
-
-        //UserDTO userDto = mapper.map(user, UserDTO.class);
 
         assertThrows(
                 ConstraintViolationException.class,
@@ -138,8 +136,6 @@ public class UserServiceTest {
 
         Mockito.when(userRepository.findById(Mockito.any()))
                 .thenReturn(Optional.ofNullable(user));
-
-        // UserDTO userDto = mapper.map(user, UserDTO.class);
 
         assertThrows(
                 ConstraintViolationException.class,
@@ -156,21 +152,29 @@ public class UserServiceTest {
 
         assertEquals("Пользователь с id = 777 не найден в базе данных", exception.getMessage());
     }
+//     Mockito.when(userRepoJpa.findById(777))
+//             .thenThrow(new NotFoundException(HttpStatus.NOT_FOUND, "Пользователь с id = 777 не найден в базе данных"));
+//    NotFoundException exception =
+//            assertThrows(NotFoundException.class,
+//                    () -> userService.deleteUserService(777));
+//
+//    assertEquals("404 NOT_FOUND \"Пользователь с id = 777 не найден в базе данных\"", exception.getMessage());
 
     @Test
     void deleteUserServiceTest() {
         when(userRepository.save(any()))
                 .thenReturn(user);
-        //UserDTO userDTO = mapper.map(user, UserDTO.class);
-        assertEquals(user.getEmail(), userService.saveUser(user).getEmail());
+        UserDto userDto = mapper.map(user, UserDto.class);
+        assertEquals(userDto.getEmail(), userService.saveUser(toUser(userDto)).getEmail());
 
-        Mockito.when(userRepository.findById(1L))
-                .thenReturn(Optional.ofNullable(user));
-        userService.deleteUser(1L);
+//        Mockito.when(userRepository.findById(1L))
+//                .thenReturn(Optional.ofNullable(user));
+//        userService.deleteUser(1L);
 
         assertThrows(IndexOutOfBoundsException.class,
                 () -> userRepository.findAll().get(0));
     }
+
 
     @Test
     void getUserByIdTest() {

@@ -24,13 +24,15 @@ public class CommentDtoTest {
         CommentDto commentDto = CommentDto.builder()
                 .id(1L)
                 .text("text")
-                .authorName("user")
+                .authorName("Raisa")
                 .created(LocalDateTime.now())
                 .build();
+
+
 
         assertNotNull(commentDto);
         assertEquals(1L, commentDto.getId());
         assertEquals("text", commentDto.getText());
-        assertEquals(user, commentDto.getAuthorName());
+        assertEquals(user.getName(), commentDto.getAuthorName());
     }
 }

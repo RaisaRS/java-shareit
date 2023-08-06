@@ -50,19 +50,17 @@ public class RequestControllerTest {
     private RequestDtoWithRequest requestDtoWithRequest;
     private UserDto userDto;
 
-    private ItemDto itemDto;
-
 
     @BeforeEach
-    private void setUp() {
-        userDto = new UserDto().builder()
+    void setUp() {
+        userDto = UserDto.builder()
                 .id(1L)
                 .name("Ivan")
                 .email("ivan@mail.ru")
                 .build();
 
 
-        requestDto = new RequestDto().builder()
+        requestDto = RequestDto.builder()
                 .id(1L)
                 .created(LocalDateTime.of(2023, 7, 9, 13, 56))
                 .description("Хотел бы воспользоваться щёткой для обуви")
@@ -70,7 +68,7 @@ public class RequestControllerTest {
                 .items(new ArrayList<>())
                 .build();
 
-        requestDtoWithRequest = new RequestDtoWithRequest().builder()
+        requestDtoWithRequest = RequestDtoWithRequest.builder()
                 .id(1L)
                 .created(LocalDateTime.of(2023, 7, 9, 13, 56))
                 .description("Хотел бы воспользоваться щёткой для обуви")
@@ -83,8 +81,6 @@ public class RequestControllerTest {
     @Test
     @SneakyThrows
     void addItemRequestTest() {
-
-
         when(itemRequestService.addItemRequest(any(), anyLong()))
                 .thenReturn(requestDto);
 
@@ -96,7 +92,7 @@ public class RequestControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNumber())
-                .andExpect(jsonPath("$.requestor.id", is(requestDto.getRequestor().getId())))
+                .andExpect(jsonPath("$.requestor.id", is(requestDto.getRequestor().getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(requestDto.getDescription())));
     }
 
@@ -112,15 +108,16 @@ public class RequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].requestor.id", is(requestDto.getRequestor().getId())))
+                .andExpect(jsonPath("$[0].requestor.id", is(requestDto.getRequestor().getId()), Long.class))
                 .andExpect(jsonPath("$[0].description", is(requestDto.getDescription())));
     }
 
     @Test
     @SneakyThrows
     void getUserItemRequests() {
+
         Long userId = userDto.getId();
-        RequestDtoWithRequest requestDtoWithRequest = new RequestDtoWithRequest().builder()
+        RequestDtoWithRequest requestDtoWithRequest = RequestDtoWithRequest.builder()
                 .id(requestDto.getId())
                 .requestor(requestDto.getRequestor())
                 .created(requestDto.getCreated())
@@ -130,6 +127,10 @@ public class RequestControllerTest {
         List<RequestDtoWithRequest> expected = new ArrayList<>(
                 List.of(requestDtoWithRequest)
         );
+
+        when(itemRequestService.getItemRequest(anyLong()))
+                .thenReturn(expected);
+
 
         MvcResult result = mockMvc.perform(get("/requests")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -160,7 +161,7 @@ public class RequestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].requestor.id", is(requestDto.getRequestor().getId())))
+                .andExpect(jsonPath("$[0].requestor.id", is(requestDto.getRequestor().getId()), Long.class))
                 .andExpect(jsonPath("$[0].description", is(requestDto.getDescription())));
     }
 
@@ -174,7 +175,7 @@ public class RequestControllerTest {
                         .header("X-Sharer-User-Id", 1L)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.requestor.id", is(requestDto.getRequestor().getId())))
+                .andExpect(jsonPath("$.requestor.id", is(requestDto.getRequestor().getId()), Long.class))
                 .andExpect(jsonPath("$.description", is(requestDto.getDescription())));
     }
 }
