@@ -1,0 +1,256 @@
+package ru.practicum.shareit.booking.repository;
+
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@DataJpaTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class BookingRepositoryTest {
+    @Autowired
+    private BookingRepository bookingRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ItemRepository itemRepository;
+    @Autowired
+    private TestEntityManager entityManager;
+
+    private User booker1;
+    private User booker2;
+    private Item item1;
+    private Item item2;
+    private Booking booking1;
+    private Booking booking2;
+    private Booking booking3;
+    private Booking booking4;
+
+    @BeforeEach
+    void setUp() {
+        booker1 = userRepository.save(new User().builder()
+                .id(1L)
+                .name("Raisa")
+                .email("Raisa@mail.ru")
+                .build());
+
+        booker2 = userRepository.save(new User().builder()
+                .id(2L)
+                .name("Name")
+                .email("Name@mail.ru")
+                .build());
+
+        item1 = itemRepository.save(new Item().builder()
+                .id(1L)
+                .name("Робот-пылесос")
+                .description("Лучший работник на планете")
+                .ownerId(booker1.getId())
+                .available(true)
+                .request(1L)
+                .build());
+
+        item2 = itemRepository.save(new Item().builder()
+                .id(2L)
+                .name("Пауэрбанк")
+                .description("Зарядное устройство для телефона")
+                .ownerId(booker2.getId())
+                .available(true)
+                .request(1L)
+                .build());
+
+        booking1 = new Booking().builder()
+                .id(1L)
+                .start(LocalDateTime.of(2023, 7, 9, 13, 56))
+                .end(LocalDateTime.of(2024, 7, 9, 13, 56))
+                .booker(booker1)
+                .item(item1)
+                .status(Status.REJECTED)
+                .build();
+
+        booking2 = new Booking().builder()
+                .id(2L)
+                .start(LocalDateTime.of(2024, 7, 9, 13, 56))
+                .end(LocalDateTime.of(2025, 7, 9, 13, 56))
+                .booker(booker2)
+                .item(item2)
+                .build();
+
+        booking3 = new Booking().builder()
+                .id(3L)
+                .start(LocalDateTime.of(2023, 7, 9, 13, 56))
+                .end(LocalDateTime.of(2024, 7, 9, 13, 56))
+                .booker(booker2)
+                .item(item2)
+                .status(Status.WAITING)
+                .build();
+
+        booking4 = new Booking().builder()
+                .id(4L)
+                .start(LocalDateTime.of(2022, 7, 9, 13, 56))
+                .end(LocalDateTime.of(2023, 7, 9, 13, 56))
+                .booker(booker2)
+                .item(item2)
+                .status(Status.REJECTED)
+                .build();
+    }
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+        itemRepository.deleteAll();
+        bookingRepository.deleteAll();
+    }
+
+    @Test
+    public void contextLoads() {
+        assertNotNull(entityManager);
+    }
+
+    @Test
+    @Transactional
+    void getAllByItemOwnerIdAndStatusOrderByStartDescTest() {
+        User booker = userRepository.findById(booker1.getId()).get();
+        List<Booking> bookingList = bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(
+                booker.getId(), Status.REJECTED, null);
+        assertEquals(bookingList.get(0).getId(), booking1.getId());
+        assertEquals(bookingList.get(0).getBooker().getName(), "Raisa");
+        assertEquals(bookingList.get(0).getStart(),
+                LocalDateTime.of(2023, 7, 9, 13, 56));
+        assertEquals(bookingList.get(0).getEnd(),
+                LocalDateTime.of(2024, 7, 9, 13, 56));
+
+    }
+
+    @Test
+    @Transactional
+    void getAllByBookerIdAndStatusOrderByStartDescTest() {
+        List<Booking> bookingList = bookingRepository
+                .getAllByBookerIdAndStatusOrderByStartDesc(booker2.getId(), Status.WAITING, null);
+
+        assertEquals(bookingList.get(0).getId(), booking3.getId());
+        assertEquals(bookingList.get(0).getBooker().getName(), "Name");
+        assertEquals(bookingList.get(0).getStart(), LocalDateTime.of(2023, 7, 9, 13, 56));
+        assertEquals(bookingList.get(0).getEnd(), LocalDateTime.of(2024, 7, 9, 13, 56));
+
+    }
+
+    @Test
+    @Transactional
+    void getBookingListByBookerIdTest() {
+        User booker = userRepository.findById(booker1.getId()).get();
+        Long bookerId = booker.getId();
+        List<Booking> bookingList = bookingRepository.getBookingListByBookerId(bookerId, null);
+
+        assertEquals(bookingList.get(0).getId(), booking1.getId());
+    }
+
+    @Test
+    @Transactional
+    void getBookingListByOwnerIdTest() {
+        User owner = userRepository.findById(booker2.getId()).get();
+        Long ownerId = owner.getId();
+        List<Booking> bookingList = bookingRepository.getBookingListByBookerId(ownerId, null);
+
+        assertEquals(bookingList.get(0).getId(), booking4.getId());
+    }
+
+    @Test
+    @Transactional
+    void getAllPastBookingsByOwnerTest() {
+        User owner = userRepository.findById(booker1.getId()).get();
+        Long ownerId = owner.getId();
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
+        List<Booking> bookingList = bookingRepository.getAllPastBookingsByOwner(ownerId, localDateTime, null);
+
+        assertEquals(bookingList.get(0).getId(), booking1.getId());
+        assertEquals(bookingList.get(0).getBooker().getName(), "Raisa");
+        assertEquals(bookingList.get(0).getStart(), LocalDateTime.of(2023, 7, 9, 13, 56));
+        assertEquals(bookingList.get(0).getEnd(), LocalDateTime.of(2023, 7, 10, 13, 56));
+    }
+
+    @Test
+    @Transactional
+    void getAllFutureBookingsByOwnerTest() {
+        User owner = userRepository.findById(booker1.getId()).get();
+        Long ownerId = owner.getId();
+        LocalDateTime localDateTime = LocalDateTime.now().plusDays(1);
+        List<Booking> bookingList = bookingRepository.getAllPastBookingsByOwner(ownerId, localDateTime, null);
+
+        assertEquals(bookingList.get(0).getId(), booking2.getId());
+        assertEquals(bookingList.get(0).getBooker().getName(), "Raisa");
+        assertEquals(bookingList.get(0).getStart(), LocalDateTime.of(2023, 8, 9, 13, 56));
+        assertEquals(bookingList.get(0).getEnd(), LocalDateTime.of(2023, 9, 10, 13, 56));
+    }
+
+    @Test
+    @Transactional
+    void getAllPastBookingsByBookerTest() {
+        User booker = userRepository.findById(booker2.getId()).get();
+        Long bookerId = booker.getId();
+        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
+        List<Booking> bookingList = bookingRepository.getAllPastBookingsByOwner(bookerId, localDateTime, null);
+
+        assertEquals(bookingList.get(0).getId(), booking3.getId());
+        assertEquals(bookingList.get(0).getBooker().getName(), "Name");
+        assertEquals(bookingList.get(0).getStart(), LocalDateTime.of(2023, 7, 9, 13, 56));
+        assertEquals(bookingList.get(0).getEnd(), LocalDateTime.of(2023, 7, 10, 13, 56));
+    }
+
+    @Test
+    @Transactional
+    void getAllFutureBookingsByBookerTest() {
+        User booker = userRepository.findById(booker2.getId()).get();
+        Long bookerId = booker.getId();
+        LocalDateTime localDateTime = LocalDateTime.now().plusDays(1);
+        List<Booking> bookingList = bookingRepository.getAllPastBookingsByOwner(bookerId, localDateTime, null);
+
+        assertEquals(bookingList.get(0).getId(), booking4.getId());
+        assertEquals(bookingList.get(0).getBooker().getName(), "Name");
+        assertEquals(bookingList.get(0).getStart(), LocalDateTime.of(2023, 8, 9, 13, 56));
+        assertEquals(bookingList.get(0).getEnd(), LocalDateTime.of(2023, 9, 10, 13, 56));
+    }
+
+    @Test
+    @Transactional
+    void getAllCurrentBookingsByBookerTest() {
+        User booker = userRepository.findById(booker2.getId()).get();
+        Long bookerId = booker.getId();
+        LocalDateTime time = LocalDateTime.now().minusDays(1);
+        LocalDateTime time1 = LocalDateTime.now().plusDays(1);
+        List<Booking> bookingList = bookingRepository.getAllCurrentBookingsByBooker(bookerId, time, time1, null);
+
+        assertEquals(bookingList.get(0).getId(), booking1.getId());
+        assertEquals(bookingList.get(0).getBooker().getName(), "Name");
+        assertEquals(bookingList.get(0).getStart(), time);
+        assertEquals(bookingList.get(0).getEnd(), time1);
+    }
+
+    @Test
+    @Transactional
+    void getAllCurrentBookingsByOwnerTest() {
+        User owner = userRepository.findById(booker1.getId()).get();
+        Long ownerId = owner.getId();
+        LocalDateTime time = LocalDateTime.now().minusDays(1);
+        LocalDateTime time1 = LocalDateTime.now().plusDays(1);
+        List<Booking> bookingList = bookingRepository.getAllCurrentBookingsByBooker(ownerId, time, time1, null);
+
+        assertEquals(bookingList.get(0).getId(), booking2.getId());
+        assertEquals(bookingList.get(0).getBooker().getName(), "Raisa");
+        assertEquals(bookingList.get(0).getStart(), time);
+        assertEquals(bookingList.get(0).getEnd(), time1);
+    }
+
+}

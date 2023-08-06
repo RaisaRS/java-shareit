@@ -2,9 +2,13 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exceptions.*;
@@ -14,10 +18,10 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
-import static ru.practicum.shareit.booking.dto.BookingMapper.toBooking;
-import static ru.practicum.shareit.booking.dto.BookingMapper.toBookingDto;
+import static ru.practicum.shareit.mappers.BookingMapper.toBooking;
+import static ru.practicum.shareit.mappers.BookingMapper.toBookingDto;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto saveBooking(long userId, BookingDto bookingDto) {
+    public BookingDto saveBooking(Long userId, BookingDto bookingDto) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + userId));
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() ->
@@ -67,7 +71,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Booking confirmOrCancelBooking(long userId, Long bookingId, boolean approved) {
+    public Booking confirmOrCancelBooking(Long userId, Long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException("Бронирование не найдено"));
 
@@ -98,7 +102,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public Booking getBookingForOwnerOrBooker(long userId, Long bookingId) {
+    public Booking getBookingForOwnerOrBooker(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new BookingNotFoundException("Бронирование не найдено"));
 
@@ -122,51 +126,52 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public Collection<Booking> getAllBookingsForUser(long userId, String state, boolean isOwner) {
+    //@Transactional(readOnly = true)
+    public List<Booking> getAllBookingsForUser(Long userId, String state, boolean isOwner, int from, int size) {
         if (!userRepository.existsById(userId)) {
             log.debug("Пользователь {} не найден ", userId);
             throw new UserNotFoundException("Пользователь не найден " + userId);
         }
 
         LocalDateTime timeNow = LocalDateTime.now();
+        Pageable pageable = PageRequest.of(from / size, size, Sort.by("start").descending());
 
         switch (state) {
             case "ALL":
                 if (isOwner) {
-                    return bookingRepository.getBookingListByOwnerId(userId);
+                    return bookingRepository.getBookingListByOwnerId(userId, pageable);
                 } else {
-                    return bookingRepository.getBookingListByBookerId(userId);
+                    return bookingRepository.getBookingListByBookerId(userId, pageable);
                 }
             case "REJECTED":
                 if (isOwner) {
-                    return bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                    return bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED, pageable);
                 } else {
-                    return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                    return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED, pageable);
                 }
             case "WAITING":
                 if (isOwner) {
-                    return bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                    return bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING, pageable);
                 } else {
-                    return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                    return bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING, pageable);
                 }
             case "CURRENT":
                 if (isOwner) {
-                    return bookingRepository.getAllCurrentBookingsByOwner(userId, timeNow);
+                    return bookingRepository.getAllCurrentBookingsByOwner(userId, timeNow, timeNow, pageable);
                 } else {
-                    return bookingRepository.getAllCurrentBookingsByBooker(userId, timeNow);
+                    return bookingRepository.getAllCurrentBookingsByBooker(userId, timeNow, timeNow, pageable);
                 }
             case "PAST":
                 if (isOwner) {
-                    return bookingRepository.getAllPastBookingsByOwner(userId, timeNow);
+                    return bookingRepository.getAllPastBookingsByOwner(userId, timeNow, pageable);
                 } else {
-                    return bookingRepository.getAllPastBookingsByBooker(userId, timeNow);
+                    return bookingRepository.getAllPastBookingsByBooker(userId, timeNow, pageable);
                 }
             case "FUTURE":
                 if (isOwner) {
-                    return bookingRepository.getAllFutureBookingsByOwner(userId, timeNow);
+                    return bookingRepository.getAllFutureBookingsByOwner(userId, timeNow, pageable);
                 } else {
-                    return bookingRepository.getAllFutureBookingsByBooker(userId, timeNow);
+                    return bookingRepository.getAllFutureBookingsByBooker(userId, timeNow, pageable);
                 }
             default:
                 throw new UnsupportedStateException("Unknown state: "
