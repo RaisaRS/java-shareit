@@ -31,6 +31,7 @@ public class ItemRequestRepositoryTest {
 
     @BeforeEach
     private void setUp() {
+
         user = userRepository.save(new User().builder()
                 .id(1L)
                 .name("Ivan")
@@ -66,7 +67,7 @@ public class ItemRequestRepositoryTest {
 
     @Test
     void findByOwnerIdTest() {
-        List<Request> requestList = itemRequestRepository.findByOwnerId(1L, null);
+        List<Request> requestList = itemRequestRepository.findByOwnerId(user.getId(), null);
 
         assertEquals(requestList.get(0).getId(), request.getId());
         assertEquals(requestList.get(0).getDescription(), "Хотел бы воспользоваться щёткой для обуви");

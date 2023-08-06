@@ -12,6 +12,6 @@ import java.util.List;
 public interface ItemRequestRepository extends PagingAndSortingRepository<Request, Long> {
     List<Request> findAllByRequestorId(Long userId);
 
-    @Query("SELECT i FROM Request  i WHERE i.requestor.id <> ?1 ORDER BY i.created DESC")
+    @Query("SELECT i FROM Request  i WHERE i.requestor.id = ?1 ORDER BY i.created DESC")
     List<Request> findByOwnerId(Long userId, Pageable pageable);
 }

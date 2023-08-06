@@ -77,7 +77,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
             throw new BadRequestException(HttpStatus.BAD_REQUEST, "неверный параметр пагинации");
         }
         Pageable pageable = PageRequest.of(from / size, size);
-        User requestor = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Пользователь не найден " + userId));
+        User requestor = userRepository.findById(userId).orElseThrow(() ->
+                new UserNotFoundException("Пользователь не найден " + userId));
         List<Request> byOwnerId = itemRequestRepository.findByOwnerId(userId, pageable);
         List<RequestDtoWithRequest> requestDtoWithRequests =
                 byOwnerId.stream()
