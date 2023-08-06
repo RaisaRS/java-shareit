@@ -114,42 +114,6 @@ public class UserServiceTest {
         assertEquals(content.getName(), "ivanupdated");
     }
 
-//    @Test
-//    void updateUserWithBadNameTest() {
-//        user.setName("");
-//        Mockito.when(userRepository.findById(Mockito.any()))
-//                .thenReturn(Optional.ofNullable(user));
-//
-//        assertThrows(
-//                ConstraintViolationException.class,
-//                () -> userService.updateUser(user));
-//    }
-
-//    @Test
-//    void updateUserWithBadEmailTest() {
-//
-//        user.setEmail("ivan@");
-//
-//        Mockito.when(userRepository.findById(Mockito.any()))
-//                .thenReturn(Optional.ofNullable(user));
-//
-//        assertThrows(
-//                ConstraintViolationException.class,
-//                () -> userService.updateUser(user));
-//    }
-
-//    @Test
-//    void deleteUserWithBadIdTest() {
-//        Mockito.when(userRepository.findById(777L))
-//                .thenThrow(new UserNotFoundException("Пользователь с id = 777 не найден в базе данных"));
-//        UserNotFoundException exception =
-//                assertThrows(UserNotFoundException.class,
-//                        () -> userService.deleteUser(777L));
-//
-//        assertEquals("Пользователь с id = 777 не найден в базе данных", exception.getMessage());
-//    }
-
-
     @Test
     void deleteUserServiceTest() {
         when(userRepository.save(any()))
@@ -160,7 +124,6 @@ public class UserServiceTest {
         assertThrows(IndexOutOfBoundsException.class,
                 () -> userRepository.findAll().get(0));
     }
-
 
     @Test
     void getUserByIdTest() {
