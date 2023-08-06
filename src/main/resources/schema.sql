@@ -43,9 +43,9 @@ create table IF NOT EXISTS BOOKINGS
     BOOKING_ID BIGINT auto_increment,
     START_DATE TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     END_DATE   TIMESTAMP WITHOUT TIME ZONE NOT NULL,
-    ITEM_ID    BIGINT     not null,
-    BOOKER_ID  BIGINT     not null,
-    STATUS     VARCHAR(8) not null,
+    ITEM_ID    BIGINT                      not null,
+    BOOKER_ID  BIGINT                      not null,
+    STATUS     VARCHAR(8)                  not null,
     constraint "BOOKINGS_pk"
         primary key (BOOKING_ID),
     constraint "BOOKINGS_ITEMS_ID_fk"

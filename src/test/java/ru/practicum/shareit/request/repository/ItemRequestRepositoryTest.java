@@ -28,6 +28,7 @@ public class ItemRequestRepositoryTest {
     private ItemRepository itemRepository;
     private Request request;
     private User user;
+    private User otherUser;
 
     @BeforeEach
     private void setUp() {
@@ -36,6 +37,11 @@ public class ItemRequestRepositoryTest {
                 .id(1L)
                 .name("Ivan")
                 .email("ivan@mail.ru")
+                .build());
+        otherUser = userRepository.save(new User().builder()
+                .id(2L)
+                .name("Name")
+                .email("iva1n@mail.ru")
                 .build());
 
         Item item = itemRepository.save(new Item().builder()
@@ -67,7 +73,7 @@ public class ItemRequestRepositoryTest {
 
     @Test
     void findByOwnerIdTest() {
-        List<Request> requestList = itemRequestRepository.findByOwnerId(user.getId(), null);
+        List<Request> requestList = itemRequestRepository.findByOwnerId(otherUser.getId(), null);
 
         assertEquals(requestList.get(0).getId(), request.getId());
         assertEquals(requestList.get(0).getDescription(), "Хотел бы воспользоваться щёткой для обуви");
@@ -75,6 +81,9 @@ public class ItemRequestRepositoryTest {
         assertEquals(requestList.get(0).getRequestor().getId(), user.getId());
         assertEquals(requestList.get(0).getRequestor().getName(), "Ivan");
         assertEquals(requestList.get(0).getRequestor().getEmail(), "ivan@mail.ru");
+
+        List<Request> requestList1 = itemRequestRepository.findByOwnerId(user.getId(), null);
+        assertEquals(requestList1.size(), 0);
 
     }
 
