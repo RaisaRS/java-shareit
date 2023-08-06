@@ -85,7 +85,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UnsupportedStateException("Unknown state: UNSUPPORTED_STATUS");
         }
 
-        if (booking.getItem().getOwnerId() != userId) {
+        if (!booking.getItem().getOwnerId().equals(userId)) {
             log.debug("Подтвердить/отклонить бронирование может только владелец предмета");
             throw new BookingNotFoundException("Подтвердить/отклонить бронирование может только " +
                     "владелец предмета - " + userId);
@@ -111,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
             throw new UserNotFoundException("Пользователь не найден " + userId);
         }
 
-        if (booking.getItem().getOwnerId() != userId && booking.getBooker().getId() != userId) {
+        if (!booking.getItem().getOwnerId().equals(userId) && !booking.getBooker().getId().equals(userId)) {
             log.debug("Просмотр бронирования доступен только владельцу предмета или его арендатору");
             throw new BookingNotFoundException("Просмотр бронирования доступен только владельцу предмета" +
                     " или его арендатору");

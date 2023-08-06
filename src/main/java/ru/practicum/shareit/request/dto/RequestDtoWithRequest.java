@@ -28,7 +28,7 @@ public class RequestDtoWithRequest {
         if (this == o) return true;
         if (!(o instanceof RequestDtoWithRequest)) return false;
         RequestDtoWithRequest that = (RequestDtoWithRequest) o;
-        return getId() == that.getId() && Objects.equals(getDescription(), that.getDescription());
+        return getId().equals(that.getId()) && Objects.equals(getDescription(), that.getDescription());
     }
 
     @Override

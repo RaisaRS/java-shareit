@@ -170,34 +170,11 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND, "комментарий к предмету с id = '" + itemId
                         + "' пользователем с id = '" + userId + "' - отсутствует запись о вещи."));
 
-//        LocalDateTime saveTime = LocalDateTime.now();
-//
-//        Comment comment = CommentMapper.toComment(user, item, commentDto, saveTime);
-//
-//        Booking booking = bookingRepository
-//                .findFirstBookingByItemIdAndEndIsBeforeAndStatusNotLikeOrderByEndDesc(itemId, saveTime,
-//                        Status.REJECTED);
-//
-//        if (booking == null) {
-//            log.debug("Предмет {} ещё не бронировался, комментарии недоступны ", itemId);
-//            throw new InCorrectBookingException("Предмет ещё не бронировался, комментарии недоступны "
-//                    + itemId);
-//        }
-//
-//        if (booking.getBooker().getId() != userId) {
-//            log.debug("Пользователь {} ранее не бронировал предмет {}, комментарии недоступны ", userId, itemId);
-//            throw new CommentNotAuthorNotBookingException("Пользователь ранее не бронировал предмет, " +
-//                    "комментарии недоступны " + userId + itemId);
-//        }
-//        comment.setAuthor(user);
-//        comment.setItem(item);
-//        comment.setCreated(saveTime);
-
         List<Booking> bookings = item.getBookings();
 
         if (bookings
                 .stream()
-                .filter(booking -> (booking.getBooker().getId() == userId)
+                .filter(booking -> (booking.getBooker().getId().equals(userId))
                         && !booking.getStart().isAfter(LocalDateTime.now())
                         && !booking.getStatus().equals(Status.REJECTED)
                 )
@@ -211,7 +188,6 @@ public class ItemServiceImpl implements ItemService {
         comment.setItem(item);
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
-        //validateComment(comment);
 
         commentRepository.save(comment);
 
