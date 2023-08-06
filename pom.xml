@@ -190,12 +190,12 @@
                                             <limit>
                                                 <counter>LINE</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.6</minimum>
+                                                <minimum>0.7</minimum>
                                             </limit>
                                             <limit>
                                                 <counter>BRANCH</counter>
                                                 <value>COVEREDRATIO</value>
-                                                <minimum>0.5</minimum>
+                                                <minimum>0.6</minimum>
                                             </limit>
                                             <!--											<limit>-->
                                             <!--												<counter>COMPLEXITY</counter>-->
