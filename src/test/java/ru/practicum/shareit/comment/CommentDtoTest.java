@@ -29,7 +29,6 @@ public class CommentDtoTest {
                 .build();
 
 
-
         assertNotNull(commentDto);
         assertEquals(1L, commentDto.getId());
         assertEquals("text", commentDto.getText());
