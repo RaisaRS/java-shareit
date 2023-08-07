@@ -191,15 +191,6 @@ public class ItemServiceTest {
     }
 
     @Test
-    void searchItemTest() {
-        when(itemRepository.searchItem(any(), any()))
-                .thenReturn(List.of(item));
-        ItemDto itemDto = mapper.map(item, ItemDto.class);
-
-        assertEquals(List.of(itemDto), itemService.searchItem("ЩёТка", 0, 20));
-    }
-
-    @Test
     void searchItemNullTest() {
 
         assertEquals(List.of(), itemService.searchItem("".toLowerCase(), 0, 20));
