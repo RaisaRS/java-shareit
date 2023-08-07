@@ -36,7 +36,6 @@ public class ItemControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-
     @MockBean
     private ItemService itemService;
 
@@ -115,7 +114,7 @@ public class ItemControllerTest {
     @SneakyThrows
     void getItemByUserIdTest() {
 
-        when(itemService.getItemsByUser(anyLong(), anyInt(), anyInt())) ////////////////////////////
+        when(itemService.getItemsByUser(anyLong(), anyInt(), anyInt()))
                 .thenReturn(List.of(itemDto));
 
         mockMvc.perform(get("/items")
@@ -132,7 +131,6 @@ public class ItemControllerTest {
     @SneakyThrows
     @Test
     void saveItemTest() {
-        //User user = userRepository.getById(itemDto.getOwnerId());
         when(itemService.saveItem(any(), anyLong()))
                 .thenReturn(toItem(user, itemDto));
 
@@ -160,6 +158,5 @@ public class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
     }
 }

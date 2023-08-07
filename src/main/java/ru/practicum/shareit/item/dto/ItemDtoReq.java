@@ -6,7 +6,6 @@ import java.util.Objects;
 
 @Getter
 @Setter
-//@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder

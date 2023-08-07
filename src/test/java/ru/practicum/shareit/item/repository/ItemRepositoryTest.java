@@ -26,7 +26,7 @@ public class ItemRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        user = userRepository.save(new User().builder()
+        user = userRepository.save(User.builder()
                 .id(1L)
                 .name("Ivan")
                 .email("ivan@mail.ru")

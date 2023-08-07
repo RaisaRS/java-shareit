@@ -54,13 +54,13 @@ public class ItemRequestServiceImplTest {
     void setUp() {
 
 
-        user = new User().builder()
+        user = User.builder()
                 .id(1L)
                 .name("Ivan")
                 .email("ivan@mail.ru")
                 .build();
 
-        item = new Item().builder()
+        item = Item.builder()
                 .id(1L)
                 .name("Щётка для обуви")
                 .description("Стандартная щётка для обуви")
@@ -69,7 +69,7 @@ public class ItemRequestServiceImplTest {
                 .ownerId(user.getId())
                 .comments(new ArrayList<>())
                 .build();
-        request = new Request().builder()
+        request = Request.builder()
                 .id(1L)
                 .created(LocalDateTime.of(2023, 7, 9, 13, 56))
                 .description("Хотел бы воспользоваться щёткой для обуви")
@@ -77,7 +77,7 @@ public class ItemRequestServiceImplTest {
                 .items(Collections.singletonList(item))
                 .build();
 
-        comment = new Comment().builder()
+        comment = Comment.builder()
                 .id(1L)
                 .text("comment")
                 .item(item)

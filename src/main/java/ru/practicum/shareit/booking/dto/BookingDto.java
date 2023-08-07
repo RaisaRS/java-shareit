@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.item.model.Item;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -29,7 +30,6 @@ public class BookingDto {
     private LocalDateTime end;
     private long bookerId;
     private Long itemId;
-    private BookingDtoItem item;
-    private BookingDtoUser booker;
+    private Item item;
     private Status status;
 }

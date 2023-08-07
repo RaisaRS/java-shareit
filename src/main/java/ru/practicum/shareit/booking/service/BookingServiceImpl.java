@@ -126,7 +126,6 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    //@Transactional(readOnly = true)
     public List<Booking> getAllBookingsForUser(Long userId, String state, boolean isOwner, int from, int size) {
         if (!userRepository.existsById(userId)) {
             log.debug("Пользователь {} не найден ", userId);

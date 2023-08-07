@@ -72,21 +72,6 @@ public class UserServiceTest {
         );
     }
 
-//    @Test
-//    void saveUserWithBadNameTest() {
-//        user.setName("");
-//        assertThrows(
-//                ConstraintViolationException.class,
-//                () -> userService.saveUser(user));
-//    }
-//
-//    @Test
-//    void saveUserWithBadEmailTest() {
-//        user.setEmail("@");
-//        assertThrows(
-//                ConstraintViolationException.class,
-//                () -> userService.saveUser(user));
-//    }
 
     @Test
     void getAllUsersTest() {

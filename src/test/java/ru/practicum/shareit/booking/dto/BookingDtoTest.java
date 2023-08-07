@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.dto;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.item.model.Item;
 
 import java.time.LocalDateTime;
 
@@ -18,9 +19,7 @@ public class BookingDtoTest {
                 .start(LocalDateTime.now())
                 .end(LocalDateTime.now().plusHours(2))
                 .bookerId(2)
-                .itemId(3L)
-                .item(new BookingDtoItem(1L, "name"))
-                .booker(new BookingDtoUser(1L))
+                .item(new Item())
                 .status(Status.APPROVED)
                 .build();
 
@@ -29,9 +28,7 @@ public class BookingDtoTest {
         assertNotNull(bookingDto.getStart());
         assertNotNull(bookingDto.getEnd());
         assertEquals(2, bookingDto.getBookerId());
-        assertEquals(3L, bookingDto.getItemId());
         assertNotNull(bookingDto.getItem());
-        assertNotNull(bookingDto.getBooker());
         assertEquals(Status.APPROVED, bookingDto.getStatus());
     }
 }

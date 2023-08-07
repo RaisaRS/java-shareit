@@ -58,14 +58,14 @@ public class ItemServiceTest {
     @BeforeEach
     void setUp() {
 
-        user = new User().builder()
+        user = User.builder()
                 .id(1L)
                 .name("Ivan")
                 .email("ivan@mail.ru")
                 .build();
 
 
-        item = new Item().builder()
+        item = Item.builder()
                 .id(1L)
                 .name("Щётка для обуви")
                 .description("Стандартная щётка для обуви")
@@ -74,7 +74,7 @@ public class ItemServiceTest {
                 .ownerId(user.getId())
                 .comments(new ArrayList<>())
                 .build();
-        comment = new Comment().builder()
+        comment = Comment.builder()
                 .id(1L)
                 .text("Комментарий")
                 .item(item)
@@ -82,7 +82,7 @@ public class ItemServiceTest {
                 .created(LocalDateTime.now())
                 .build();
 
-        booking = new Booking().builder()
+        booking = Booking.builder()
                 .id(1L)
                 .start(LocalDateTime.now().minusDays(1))
                 .end(LocalDateTime.of(2024, 7, 9, 13, 56))
@@ -90,7 +90,7 @@ public class ItemServiceTest {
                 .booker(user)
                 .status(Status.WAITING)
                 .build();
-        booking2 = new Booking().builder()
+        booking2 = Booking.builder()
                 .id(2L)
                 .start(LocalDateTime.now().minusDays(2))
                 .end(LocalDateTime.of(2024, 7, 9, 13, 56))
@@ -98,13 +98,11 @@ public class ItemServiceTest {
                 .booker(user)
                 .status(Status.WAITING)
                 .build();
-
     }
 
     @AfterEach
     void tearDown() {
         itemRepository.deleteAll();
-
     }
 
     @Test

@@ -25,7 +25,6 @@ public class Request {
     @Column(name = "request_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //@NotBlank
     @Column(name = "description", nullable = false)
     private String description;
     @ManyToOne

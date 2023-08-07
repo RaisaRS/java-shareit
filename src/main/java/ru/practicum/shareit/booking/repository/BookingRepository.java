@@ -12,10 +12,6 @@ import java.util.List;
 
 @Repository
 public interface BookingRepository extends PagingAndSortingRepository<Booking, Long> {
-//    Booking findFirstBookingByItemIdAndEndIsBeforeAndStatusNotLikeOrderByEndDesc(Long itemId,
-//                                                                                 LocalDateTime dateTime,
-//                                                                                 Status status);
-
     Booking findFirstBookingByItemIdAndStartIsAfterAndStatusNotLikeOrderByStartAsc(Long itemId,
                                                                                    LocalDateTime dateTime,
                                                                                    Status status);

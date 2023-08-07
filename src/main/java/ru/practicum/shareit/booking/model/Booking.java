@@ -26,7 +26,6 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "start_date")
-    //@FutureOrPresent
     private LocalDateTime start;
     @Column(name = "end_date")
     @Future

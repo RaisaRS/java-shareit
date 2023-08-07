@@ -89,6 +89,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto getItemById(Long userId, Long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ItemNotFoundException("Предмет не найден " + itemId));
@@ -105,6 +106,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> getItemsByUser(Long userId, int from, int size) {
         if (!userRepository.existsById(userId)) {
             log.debug("Пользователь {} не найден", userId);

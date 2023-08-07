@@ -24,7 +24,6 @@ public class ItemDto {
     private Long id;
     @NotBlank(message = "Name не должен быть пустым")
     private String name;
-    @NotBlank
     @NotBlank(message = "description не должен быть пустым")
     private String description;
     private Long ownerId;

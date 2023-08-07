@@ -18,6 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@Transactional
 @DataJpaTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class BookingRepositoryTest {
@@ -121,7 +122,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getAllByItemOwnerIdAndStatusOrderByStartDescTest() {
         User booker = userRepository.findById(booker1.getId()).get();
         List<Booking> bookingList = bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(
@@ -136,7 +136,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getAllByBookerIdAndStatusOrderByStartDescTest() {
         List<Booking> bookingList = bookingRepository
                 .getAllByBookerIdAndStatusOrderByStartDesc(booker2.getId(), Status.WAITING, null);
@@ -151,7 +150,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getBookingListByBookerIdTest() {
         User booker = userRepository.findById(booker1.getId()).get();
         Long bookerId = booker.getId();
@@ -161,7 +159,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getBookingListByOwnerIdTest() {
         User owner = userRepository.findById(booker2.getId()).get();
         Long ownerId = owner.getId();
@@ -171,7 +168,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getAllPastBookingsByOwnerTest() {
         User owner = userRepository.findById(booker1.getId()).get();
         Long ownerId = owner.getId();
@@ -187,7 +183,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getAllFutureBookingsByOwnerTest() {
         User owner = userRepository.findById(booker1.getId()).get();
         Long ownerId = owner.getId();
@@ -203,7 +198,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getAllFutureBookingsByBookerTest() {
         User booker = userRepository.findById(booker2.getId()).get();
         Long bookerId = booker.getId();
@@ -217,7 +211,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getAllCurrentBookingsByBookerTest() {
         User booker = userRepository.findById(booker2.getId()).get();
         Long bookerId = booker.getId();
@@ -232,7 +225,6 @@ public class BookingRepositoryTest {
     }
 
     @Test
-    @Transactional
     void getAllCurrentBookingsByOwnerTest() {
         User owner = userRepository.findById(booker1.getId()).get();
         Long ownerId = owner.getId();
@@ -245,5 +237,4 @@ public class BookingRepositoryTest {
         assertEquals(bookingList.get(0).getStart(), booking1.getStart());
         assertEquals(bookingList.get(0).getEnd(), booking1.getEnd());
     }
-
 }

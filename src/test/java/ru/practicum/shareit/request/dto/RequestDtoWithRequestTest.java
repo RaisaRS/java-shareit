@@ -22,7 +22,7 @@ public class RequestDtoWithRequestTest {
         UserDto user2 = new UserDto(2L, "Jane", "Smith");
 
         List<ItemDtoReq> items1 = new ArrayList<>();
-        items1.add(new ItemDtoReq().builder()
+        items1.add(ItemDtoReq.builder()
                 .id(1L)
                 .name("Щётка для обуви")
                 .description("Стандартная щётка для обуви")
@@ -33,7 +33,7 @@ public class RequestDtoWithRequestTest {
 
 
         List<ItemDtoReq> items2 = new ArrayList<>();
-        items2.add(new ItemDtoReq().builder()
+        items2.add(ItemDtoReq.builder()
                 .id(2L)
                 .name("Щётка для обуви2")
                 .description("Стандартная щётка для обуви2")
@@ -45,11 +45,9 @@ public class RequestDtoWithRequestTest {
         RequestDtoWithRequest request2 = new RequestDtoWithRequest(2L, "Request 2", user2, currentTime, items2);
         RequestDtoWithRequest request3 = new RequestDtoWithRequest(1L, "Request 1", user1, currentTime, items1);
 
-        // Verify equals() method
         assertNotEquals(request1, request2);
         assertEquals(request1, request3);
 
-        // Verify hashCode() method
         int hashCode1 = request1.hashCode();
         int hashCode2 = request2.hashCode();
         int hashCode3 = request3.hashCode();

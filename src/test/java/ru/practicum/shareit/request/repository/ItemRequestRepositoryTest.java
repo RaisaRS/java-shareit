@@ -31,20 +31,20 @@ public class ItemRequestRepositoryTest {
     private User otherUser;
 
     @BeforeEach
-    private void setUp() {
+    public void setUp() {
 
-        user = userRepository.save(new User().builder()
+        user = userRepository.save(User.builder()
                 .id(1L)
                 .name("Ivan")
                 .email("ivan@mail.ru")
                 .build());
-        otherUser = userRepository.save(new User().builder()
+        otherUser = userRepository.save(User.builder()
                 .id(2L)
                 .name("Name")
                 .email("iva1n@mail.ru")
                 .build());
 
-        Item item = itemRepository.save(new Item().builder()
+        Item item = itemRepository.save(Item.builder()
                 .id(1L)
                 .name("Щётка для обуви")
                 .description("Стандартная щётка для обуви")
@@ -54,7 +54,7 @@ public class ItemRequestRepositoryTest {
                 .build());
 
 
-        request = itemRequestRepository.save(new Request().builder()
+        request = itemRequestRepository.save(Request.builder()
                 .id(1L)
                 .created(LocalDateTime.of(2023, 7, 9, 13, 56))
                 .description("Хотел бы воспользоваться щёткой для обуви")
@@ -64,6 +64,10 @@ public class ItemRequestRepositoryTest {
         System.out.println(request);
     }
 
+    @AfterEach
+    public void tearDown() {
+        itemRequestRepository.deleteAll();
+    }
 
     @Test
     void findAllByRequestorIdTest() {
@@ -84,11 +88,6 @@ public class ItemRequestRepositoryTest {
 
         List<Request> requestList1 = itemRequestRepository.findByOwnerId(user.getId(), null);
         assertEquals(requestList1.size(), 0);
-
     }
 
-    @AfterEach
-    private void tearDown() {
-        itemRequestRepository.deleteAll();
-    }
 }
