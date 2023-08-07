@@ -32,4 +32,5 @@ public class BookingDto {
     private Long itemId;
     private Item item;
     private Status status;
+    //для проверки
 }
