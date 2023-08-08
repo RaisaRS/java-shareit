@@ -13,8 +13,8 @@ public class BookingMapper {
 
     public static BookingDto toBookingDto(Booking booking) {
         return BookingDto.builder()
-                .bookerId(booking.getBooker().getId())
-                .item(booking.getItem())
+                .booker(UserMapper.toUserDto(booking.getBooker()))
+                .item(ItemMapper.toItemDto(booking.getItem()))
                 .id(booking.getId())
                 .start(booking.getStart())
                 .end(booking.getEnd())
@@ -31,6 +31,7 @@ public class BookingMapper {
 
     public static Booking toBooking(User user, Item item, BookingDto bookingDto) {
         Booking booking = new Booking();
+        booking.setId(bookingDto.getId());
         booking.setBooker(user);
         booking.setItem(item);
         booking.setStart(bookingDto.getStart());

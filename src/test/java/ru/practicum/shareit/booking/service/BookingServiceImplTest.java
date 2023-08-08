@@ -31,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static ru.practicum.shareit.mappers.BookingMapper.toBooking;
+import static ru.practicum.shareit.mappers.UserMapper.toUserDto;
 
 @ExtendWith(MockitoExtension.class)
 public class BookingServiceImplTest {
@@ -105,7 +107,7 @@ public class BookingServiceImplTest {
                 .id(1L)
                 .start(LocalDateTime.now().plusMonths(1))
                 .end(LocalDateTime.of(2024, 7, 9, 13, 56))
-                .bookerId(user.getId())
+                .booker(toUserDto(user))
                 .itemId(2L)
                 .status(Status.WAITING)
                 .build();
@@ -114,7 +116,7 @@ public class BookingServiceImplTest {
                 .id(2L)
                 .start(LocalDateTime.now().plusMonths(1))
                 .end(LocalDateTime.now().minusMonths(1))
-                .bookerId(user1.getId())
+                .booker(toUserDto(user1))
                 .itemId(1L)
                 .status(Status.WAITING)
                 .build();
@@ -123,7 +125,7 @@ public class BookingServiceImplTest {
                 .id(1L)
                 .start(LocalDateTime.now().minusMonths(1))
                 .end(LocalDateTime.now().minusMonths(1))
-                .bookerId(user.getId())
+                .booker(toUserDto(user))
                 .itemId(1L)
                 .status(Status.WAITING)
                 .build();
@@ -132,7 +134,7 @@ public class BookingServiceImplTest {
                 .id(3L)
                 .start(LocalDateTime.now())
                 .end(LocalDateTime.now().plusMonths(1))
-                .bookerId(user.getId())
+                .booker(toUserDto(user))
                 .itemId(item.getId())
                 .status(Status.WAITING)
                 .build();
@@ -183,7 +185,7 @@ public class BookingServiceImplTest {
     void getByBookerTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto); //mapper.map(bookingDto, Booking.class);
         booking.setItem(item);
         when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booking));
@@ -196,7 +198,7 @@ public class BookingServiceImplTest {
     void getAllBookingsForUserTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getBookingListByOwnerId(any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -211,7 +213,7 @@ public class BookingServiceImplTest {
     void getAllForBookerFUTURETest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllFutureBookingsByBooker(any(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -226,7 +228,7 @@ public class BookingServiceImplTest {
     void getAllForBookerWAITINGTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
         when(bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(any(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
         List<Booking> expectedResult = List.of(booking);
@@ -239,7 +241,7 @@ public class BookingServiceImplTest {
     void getAllForBookerREJECTEDTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllByBookerIdAndStatusOrderByStartDesc(any(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -254,7 +256,7 @@ public class BookingServiceImplTest {
     void getAllForBookerCURRENTTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllCurrentBookingsByBooker(any(), any(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -269,7 +271,7 @@ public class BookingServiceImplTest {
     void getAllForBookerPASTTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllPastBookingsByBooker(any(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -284,7 +286,7 @@ public class BookingServiceImplTest {
     void getAllForOwnerTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getBookingListByOwnerId(anyLong(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -299,7 +301,7 @@ public class BookingServiceImplTest {
     void getAllForOwnerCURRENTTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllCurrentBookingsByOwner(any(), any(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -314,7 +316,7 @@ public class BookingServiceImplTest {
     void getAllForOwnerPASTTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllPastBookingsByOwner(any(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -329,7 +331,7 @@ public class BookingServiceImplTest {
     void getAllForOwnerFUTURETest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllFutureBookingsByOwner(anyLong(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -344,7 +346,7 @@ public class BookingServiceImplTest {
     void getAllForOwnerWAITINGTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(anyLong(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -359,7 +361,7 @@ public class BookingServiceImplTest {
     void getAllForOwnerREJECTEDTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
 
         when(bookingRepository.getAllByItemOwnerIdAndStatusOrderByStartDesc(anyLong(), any(), any()))
                 .thenReturn(Collections.singletonList(booking));
@@ -374,7 +376,7 @@ public class BookingServiceImplTest {
     void confirmOrCancelBookingTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = mapper.map(bookingDto3, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
         booking.setItem(item2);
         when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.ofNullable(booking));

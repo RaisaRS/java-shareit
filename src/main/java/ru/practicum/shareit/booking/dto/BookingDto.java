@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
 import ru.practicum.shareit.booking.enums.Status;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -28,9 +29,10 @@ public class BookingDto {
     @Future(message = "Дата окончания бронирования не может быть в прошлом")
     @JsonProperty("end")
     private LocalDateTime end;
-    private long bookerId;
+    private UserDto booker;
     private Long itemId;
-    private Item item;
+    private ItemDto item;
     private Status status;
     //для проверки
 }
+
