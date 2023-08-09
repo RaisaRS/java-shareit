@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.mappers.RequestMapper.toItemRequest;
-import static ru.practicum.shareit.mappers.RequestMapper.toItemRequestDto;
+import static ru.practicum.shareit.mappers.RequestMapper.*;
 
 @Service
 @RequiredArgsConstructor
@@ -54,13 +53,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
 
     @Override
-    @Transactional(readOnly = true)
     public List<RequestDtoWithRequest> getItemRequest(Long userId) {
         User requestor = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + userId));
         List<RequestDtoWithRequest> requestDtoWithRequests =
                 itemRequestRepository.findAllByRequestorId(userId).stream()
-                        .map(request -> mapper.map(request, RequestDtoWithRequest.class))
+                        .map(request -> toRequestDtoWithRequest(request))
                         .collect(Collectors.toList());
         for (RequestDtoWithRequest withRequest : requestDtoWithRequests) {
             for (ItemDtoReq item : withRequest.getItems()) {
@@ -71,7 +69,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<RequestDtoWithRequest> getAllItemRequest(Long userId, int from, int size) {
         if ((from < 0 || size < 0 || (from == 0 && size == 0))) {
             throw new BadRequestException(HttpStatus.BAD_REQUEST, "неверный параметр пагинации");
@@ -83,7 +80,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<RequestDtoWithRequest> requestDtoWithRequests =
                 byOwnerId.stream()
                         .map(request -> {
-                            return mapper.map(request, RequestDtoWithRequest.class);
+                            return toRequestDtoWithRequest(request); //mapper.map(request, RequestDtoWithRequest.class);
                         })
                         .collect(Collectors.toList());
         for (RequestDtoWithRequest withRequest : requestDtoWithRequests) {
@@ -95,13 +92,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public RequestDtoWithRequest getRequestById(Long userId, Long requestId) {
         User requestor = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + userId));
         Request request = itemRequestRepository.findById(requestId).orElseThrow(() ->
                 new RequestNotFoundException(HttpStatus.NOT_FOUND, "Запрос предмета по id не найден"));
-        RequestDtoWithRequest requestDtoWithRequest = mapper.map(request, RequestDtoWithRequest.class);
+        RequestDtoWithRequest requestDtoWithRequest = toRequestDtoWithRequest(request);
         for (ItemDtoReq item : requestDtoWithRequest.getItems()) {
             item.setRequestId(requestId);
         }

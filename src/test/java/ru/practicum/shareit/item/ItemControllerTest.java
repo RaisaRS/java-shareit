@@ -53,7 +53,7 @@ public class ItemControllerTest {
                 .email("raisa@mail.ru")
                 .build();
 
-        itemDto = new ItemDto().builder()
+        itemDto = ItemDto.builder()
                 .id(1L)
                 .name("Щётка для обуви")
                 .description("Стандартная щётка для обуви")
@@ -64,7 +64,7 @@ public class ItemControllerTest {
                 .requestId(1L)
                 .build();
 
-        commentDto = new CommentDto().builder()
+        commentDto = CommentDto.builder()
                 .id(1L)
                 .text("comment")
                 .created(LocalDateTime.now())

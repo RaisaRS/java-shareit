@@ -21,7 +21,7 @@ public class RequestDtoWithRequest {
     private UserDto requestor;
     @JsonProperty("created")
     private LocalDateTime created;
-    List<ItemDtoReq> items = new ArrayList<>();
+    private List<ItemDtoReq> items = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

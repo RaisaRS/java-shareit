@@ -133,7 +133,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    //@Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public Collection<ItemDto> searchItem(String text, int from, int size) {
         if (text.isEmpty()) {
             log.debug("Запрос не найден");

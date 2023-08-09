@@ -2,8 +2,12 @@ package ru.practicum.shareit.mappers;
 
 import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoReq;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public class ItemMapper {
@@ -25,5 +29,22 @@ public class ItemMapper {
         item.setOwnerId(user.getId());
         item.setAvailable(itemDto.getAvailable());
         return item;
+    }
+
+    public static ItemDtoReq toItemDtoReq(Item item) {
+        return ItemDtoReq.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .ownerId(item.getOwnerId())
+                .requestId(item.getRequest())
+                .available(item.getAvailable())
+                .build();
+    }
+
+    public static List<ItemDtoReq> toItemDtoList(List<Item> items) {
+        return items.stream()
+                .map(ItemMapper::toItemDtoReq)
+                .collect(Collectors.toList());
     }
 }

@@ -29,11 +29,11 @@ public class Request {
     private String description;
     @ManyToOne
     @JoinColumn(name = "requestor_id", nullable = false)
-    User requestor;
+    private User requestor;
     @Column(name = "created")
     private LocalDateTime created;
     @OneToMany(mappedBy = "request", orphanRemoval = true, cascade = CascadeType.ALL)
     @Column(nullable = true)
     @JsonIgnore
-    List<Item> items;
+    private List<Item> items;
 }
