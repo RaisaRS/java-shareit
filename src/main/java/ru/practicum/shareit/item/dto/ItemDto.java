@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.comment.dto.CommentDto;
 
@@ -14,12 +13,14 @@ import java.util.List;
  */
 @Data
 @Builder
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto {
 
     private Long id;
     @NotBlank(message = "Name не должен быть пустым")
     private String name;
-    @NotBlank
     @NotBlank(message = "description не должен быть пустым")
     private String description;
     private Long ownerId;
@@ -28,4 +29,6 @@ public class ItemDto {
     private List<CommentDto> comments;
     private BookingDtoShort lastBooking;
     private BookingDtoShort nextBooking;
+    private Long requestId;
+
 }

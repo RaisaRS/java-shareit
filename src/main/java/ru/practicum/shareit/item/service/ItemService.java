@@ -8,17 +8,17 @@ import java.util.Collection;
 import java.util.List;
 
 public interface ItemService {
-    Item saveItem(ItemDto itemDto, long userId);
+    Item saveItem(ItemDto itemDto, Long userId);
 
-    Item updateItem(ItemDto itemDto, long userId);
+    Item updateItem(ItemDto itemDto, Long userId);
 
-    ItemDto getItemById(long userId, Long itemId);
+    ItemDto getItemById(Long userId, Long itemId);
 
-    List<ItemDto> getItemsByUser(long userId);
+    List<ItemDto> getItemsByUser(Long userId, int from, int size);
 
-    Collection<Item> searchItem(String text);
+    Collection<ItemDto> searchItem(String text, int from, int size);
 
-    CommentDto postComment(long userId, Long itemId, CommentDto commentDto);
+    CommentDto postComment(Long userId, Long itemId, CommentDto commentDto);
 
-    void deleteItemById(long userId, Long itemId);
+    void deleteItemById(Long userId, Long itemId);
 }

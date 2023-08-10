@@ -1,20 +1,17 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.booking.service.Status;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 
 @Repository
-public interface BookingRepository extends JpaRepository<Booking, Long> {
-    Booking findFirstBookingByItemIdAndEndIsBeforeAndStatusNotLikeOrderByEndDesc(Long itemId,
-                                                                                 LocalDateTime dateTime,
-                                                                                 Status status);
-
+public interface BookingRepository extends PagingAndSortingRepository<Booking, Long> {
     Booking findFirstBookingByItemIdAndStartIsAfterAndStatusNotLikeOrderByStartAsc(Long itemId,
                                                                                    LocalDateTime dateTime,
                                                                                    Status status);
@@ -23,46 +20,46 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
                                                                                      LocalDateTime dateTime,
                                                                                      Status status);
 
-    Collection<Booking> getAllByItemOwnerIdAndStatusOrderByStartDesc(long ownerId, Status status);
+    List<Booking> getAllByItemOwnerIdAndStatusOrderByStartDesc(Long ownerId, Status status, Pageable pageable);
 
-    Collection<Booking> getAllByBookerIdAndStatusOrderByStartDesc(long bookerId, Status status);
+    List<Booking> getAllByBookerIdAndStatusOrderByStartDesc(Long bookerId, Status status, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.booker AS bb" +
+    @Query("SELECT b FROM Booking b JOIN b.booker bb" +
             " WHERE bb.id = ?1 ORDER BY b.start DESC")
-    Collection<Booking> getBookingListByBookerId(Long bookerId);
+    List<Booking> getBookingListByBookerId(Long bookerId, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.item AS i " +
+    @Query("SELECT b FROM Booking b JOIN b.item i " +
             "WHERE i.ownerId = ?1 " +
             "ORDER BY b.start DESC")
-    Collection<Booking> getBookingListByOwnerId(long ownerId);
+    List<Booking> getBookingListByOwnerId(Long ownerId, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.item AS i " +
+    @Query("SELECT b FROM Booking b JOIN b.item i " +
             "WHERE i.ownerId = ?1 AND (b.end < ?2) " +
             "ORDER BY b.start DESC")
-    Collection<Booking> getAllPastBookingsByOwner(long ownerId, LocalDateTime time);
+    List<Booking> getAllPastBookingsByOwner(Long ownerId, LocalDateTime time, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.item AS i " +
+    @Query("SELECT b FROM Booking b JOIN b.item i " +
             " WHERE i.ownerId = ?1 AND(b.end > ?2) " +
             "ORDER BY b.start DESC")
-    Collection<Booking> getAllFutureBookingsByOwner(long ownerId, LocalDateTime time);
+    List<Booking> getAllFutureBookingsByOwner(Long ownerId, LocalDateTime time, Pageable pageable);
 
-    @Query("SELECT b FROM Booking  AS b JOIN b.booker AS bb" +
+    @Query("SELECT b FROM Booking b JOIN b.booker bb" +
             " WHERE bb.id = ?1 AND (b.end < ?2) " +
             "ORDER BY b.start DESC")
-    Collection<Booking> getAllPastBookingsByBooker(long bookerId, LocalDateTime timeNow);
+    List<Booking> getAllPastBookingsByBooker(Long bookerId, LocalDateTime timeNow, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.booker AS bb " +
+    @Query("SELECT b FROM Booking b JOIN b.booker bb " +
             "WHERE bb.id = ?1 AND (b.end > ?2) " +
             "ORDER BY b.start DESC")
-    Collection<Booking> getAllFutureBookingsByBooker(long bookerId, LocalDateTime timeNow);
+    List<Booking> getAllFutureBookingsByBooker(Long bookerId, LocalDateTime timeNow, Pageable pageable);
 
-    @Query("SELECT b FROM Booking AS b JOIN b.booker AS bb " +
+    @Query("SELECT b FROM Booking b JOIN b.booker bb " +
             "WHERE bb.id = ?1 AND (b.start <= ?2 AND b.end >= ?2)" +
             " ORDER BY b.start DESC")
-    Collection<Booking> getAllCurrentBookingsByBooker(long bookerId, LocalDateTime timeNow);
+    List<Booking> getAllCurrentBookingsByBooker(Long bookerId, LocalDateTime timeNow, LocalDateTime now1, Pageable pageable);
 
-    @Query("SELECT b FROM Booking  AS b JOIN b.item AS i WHERE i.ownerId = ?1 " +
+    @Query("SELECT b FROM Booking b JOIN b.item i WHERE i.ownerId = ?1 " +
             "AND (b.start <= ?2 AND b.end >= ?2) " +
             "ORDER BY b.start DESC")
-    Collection<Booking> getAllCurrentBookingsByOwner(long ownerId, LocalDateTime timeNow);
+    List<Booking> getAllCurrentBookingsByOwner(Long ownerId, LocalDateTime timeNow, LocalDateTime now1, Pageable pageable);
 }

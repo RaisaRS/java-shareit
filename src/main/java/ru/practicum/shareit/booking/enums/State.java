@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.service;
+package ru.practicum.shareit.booking.enums;
 
 public enum State { //статус бронирования используется только в контроллере!!!!!
     CURRENT, //текущие

@@ -1,10 +1,11 @@
 package ru.practicum.shareit.item.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.comment.model.Comment;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 /**
@@ -13,8 +14,11 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(exclude = {"id"})
 @Table(name = "items")
+@Builder
 public class Item {
     @Id
     @Column(name = "item_id")
@@ -28,4 +32,10 @@ public class Item {
     private Long ownerId;
     @Column(name = "is_available")
     private Boolean available;
+    @Column
+    private Long request;
+    @OneToMany(mappedBy = "item")
+    private List<Booking> bookings;
+    @OneToMany(mappedBy = "item")
+    private List<Comment> comments;
 }
