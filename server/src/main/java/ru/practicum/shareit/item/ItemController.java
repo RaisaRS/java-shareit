@@ -3,16 +3,14 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.mappers.ItemMapper;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.Collection;
 import java.util.List;
-
-import static ru.practicum.shareit.mappers.ItemMapper.toItemDto;
 
 /**
  * TODO Sprint add-controllers.
@@ -29,7 +27,7 @@ public class ItemController {
     public ItemDto saveItem(@RequestBody @Valid ItemDto itemDto,
                             @RequestHeader(name = USER_ID_HEADER) Long userId) {
         log.info("Получен POST-запрос /items {} ", itemDto);
-        return toItemDto(itemService.saveItem(itemDto, userId));
+        return ItemMapper.toItemDto(itemService.saveItem(itemDto, userId));
     }
 
     @PatchMapping("/{itemId}")
@@ -37,7 +35,7 @@ public class ItemController {
                               @RequestBody ItemDto itemDto, @PathVariable Long itemId) {
         log.info("Получен PATCH-запрос /itemId {} ", itemId);
         itemDto.setId(itemId);
-        return toItemDto(itemService.updateItem(itemDto, userId));
+        return ItemMapper.toItemDto(itemService.updateItem(itemDto, userId));
     }
 
     @GetMapping("/{itemId}")

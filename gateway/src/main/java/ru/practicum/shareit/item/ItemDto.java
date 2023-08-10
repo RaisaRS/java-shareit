@@ -1,8 +1,7 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.item;
 
 import lombok.*;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
-import ru.practicum.shareit.comment.dto.CommentDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

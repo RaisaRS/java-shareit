@@ -11,7 +11,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exceptions.BadRequestException;

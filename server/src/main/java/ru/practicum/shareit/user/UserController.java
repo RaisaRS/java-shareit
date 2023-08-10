@@ -45,8 +45,8 @@ public class UserController {
     @PostMapping
     public UserDto saveUser(@NotNull @Valid @RequestBody UserDto userDto) {
         log.info("Получен POST-запрос /users {} ", userDto);
-        User user = toUser(userDto);
-        return toUserDto(userService.saveUser(user));
+        User user = UserMapper.toUser(userDto);
+        return UserMapper.toUserDto(userService.saveUser(user));
     }
 
     @DeleteMapping("{userId}")
@@ -57,8 +57,8 @@ public class UserController {
 
     @PatchMapping("/{userId}")
     public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long userId) {
-        User user = toUserWithId(userId, userDto);
+        User user = UserMapper.toUserWithId(userId, userDto);
         log.info("Получен PATCH-запрос /userId {} ", userId);
-        return toUserDto(userService.updateUser(user));
+        return UserMapper.toUserDto(userService.updateUser(user));
     }
 }

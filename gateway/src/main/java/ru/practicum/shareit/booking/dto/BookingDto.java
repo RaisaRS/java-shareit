@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.booking.enums.Status;
-import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 
 import javax.validation.constraints.Future;

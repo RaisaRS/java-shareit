@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.enums.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.comment.dto.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
@@ -35,9 +34,6 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static ru.practicum.shareit.comment.dto.CommentMapper.toCommentDto;
-import static ru.practicum.shareit.mappers.BookingMapper.toBookingDtoShort;
-import static ru.practicum.shareit.mappers.ItemMapper.toItem;
-import static ru.practicum.shareit.mappers.ItemMapper.toItemDto;
 
 @Service
 @Slf4j
@@ -57,7 +53,7 @@ public class ItemServiceImpl implements ItemService {
     public Item saveItem(ItemDto itemDto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new UserNotFoundException("Пользователь не найден " + userId));
-        Item item = toItem(user, itemDto);
+        Item item = ItemMapper.toItem(user, itemDto);
         log.info("Добавлен предмет {}, владелец: id = {}", itemDto, userId);
         item.setOwnerId(userId);
         item.setRequest(itemDto.getRequestId());
@@ -72,7 +68,7 @@ public class ItemServiceImpl implements ItemService {
                 new UserNotFoundException("Пользователь не найден " + userId));
         Item itemUpdate = itemRepository.findById(itemDto.getId()).orElseThrow(() ->
                 new ItemNotFoundException("Предмет не найден " + itemDto.getId()));
-        Item item = toItem(user, itemDto);
+        Item item = ItemMapper.toItem(user, itemDto);
         itemUpdate.setOwnerId(userId);
         if (Objects.nonNull(item.getName())) {
             itemUpdate.setName(item.getName());
@@ -94,7 +90,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() ->
                 new ItemNotFoundException("Предмет не найден " + itemId));
         List<Comment> comments = commentRepository.findAllByItemId(itemId);
-        ItemDto itemDto = toItemDto(item);
+        ItemDto itemDto = ItemMapper.toItemDto(item);
         if (item.getOwnerId().equals(userId)) {
             addLastAndNextDateTimeForBookingToItem(itemDto);
         }
@@ -153,7 +149,7 @@ public class ItemServiceImpl implements ItemService {
         log.info("Выполнен поиск среди предметов по : {}.", text);
         return itemRepository.searchItem(textToLowerCase, pageable)
                 .stream()
-                .map(item -> toItemDto(item))
+                .map(item -> ItemMapper.toItemDto(item))
                 .collect(Collectors.toList());
     }
 
@@ -193,7 +189,7 @@ public class ItemServiceImpl implements ItemService {
 
         commentRepository.save(comment);
 
-        return toCommentDto(comment);
+        return CommentMapper.toCommentDto(comment);
     }
 
     @Override
@@ -215,13 +211,13 @@ public class ItemServiceImpl implements ItemService {
                         timeNow, Status.REJECTED);
 
         if (next != null) {
-            itemDto.setNextBooking(toBookingDtoShort(next));
+            itemDto.setNextBooking(BookingMapper.toBookingDtoShort(next));
         } else {
             itemDto.setNextBooking(null);
         }
 
         if (last != null) {
-            itemDto.setLastBooking(toBookingDtoShort(last));
+            itemDto.setLastBooking(BookingMapper.toBookingDtoShort(last));
         } else {
             itemDto.setLastBooking(null);
         }

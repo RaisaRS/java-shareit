@@ -41,11 +41,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (newUser.isPresent()) {
             User user = newUser.get();
 
-            Request request = toItemRequest(user, requestDto);
+            Request request = RequestMapper.toItemRequest(user, requestDto);
             request.setRequestor(user);
             request.setCreated(LocalDateTime.now());
 
-            return toItemRequestDto(itemRequestRepository.save(request));
+            return RequestMapper.toItemRequestDto(itemRequestRepository.save(request));
         } else {
             throw new UserNotFoundException("Пользователь с id " + "userId" + "не найден");
         }
@@ -58,7 +58,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 new UserNotFoundException("Пользователь не найден " + userId));
         List<RequestDtoWithRequest> requestDtoWithRequests =
                 itemRequestRepository.findAllByRequestorId(userId).stream()
-                        .map(request -> toRequestDtoWithRequest(request))
+                        .map(request -> RequestMapper.toRequestDtoWithRequest(request))
                         .collect(Collectors.toList());
         for (RequestDtoWithRequest withRequest : requestDtoWithRequests) {
             for (ItemDtoReq item : withRequest.getItems()) {
@@ -80,7 +80,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<RequestDtoWithRequest> requestDtoWithRequests =
                 byOwnerId.stream()
                         .map(request -> {
-                            return toRequestDtoWithRequest(request); //mapper.map(request, RequestDtoWithRequest.class);
+                            return RequestMapper.toRequestDtoWithRequest(request); //mapper.map(request, RequestDtoWithRequest.class);
                         })
                         .collect(Collectors.toList());
         for (RequestDtoWithRequest withRequest : requestDtoWithRequests) {
@@ -97,7 +97,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 new UserNotFoundException("Пользователь не найден " + userId));
         Request request = itemRequestRepository.findById(requestId).orElseThrow(() ->
                 new RequestNotFoundException(HttpStatus.NOT_FOUND, "Запрос предмета по id не найден"));
-        RequestDtoWithRequest requestDtoWithRequest = toRequestDtoWithRequest(request);
+        RequestDtoWithRequest requestDtoWithRequest = RequestMapper.toRequestDtoWithRequest(request);
         for (ItemDtoReq item : requestDtoWithRequest.getItems()) {
             item.setRequestId(requestId);
         }

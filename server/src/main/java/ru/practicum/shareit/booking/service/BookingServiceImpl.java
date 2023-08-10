@@ -42,7 +42,7 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() ->
                 new ItemNotFoundException("Предмет не найден."));
 
-        Booking booking = toBooking(user, item, bookingDto);
+        Booking booking = BookingMapper.toBooking(user, item, bookingDto);
 
         if (!booking.getEnd().isAfter(booking.getStart())) {
             log.debug("Некорректная дата бронировния");
@@ -66,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
         log.info("Предмет {} ожидает подтверждения бронирования от владельца: {} ",
                 booking.getItem(), booking.getItem().getOwnerId());
 
-        return toBookingDto(bookingRepository.save(booking));
+        return BookingMapper.toBookingDto(bookingRepository.save(booking));
     }
 
     @Override

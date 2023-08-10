@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.comment.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -23,13 +24,16 @@ import static ru.practicum.shareit.mappers.ItemMapper.toItemDto;
 @Slf4j
 public class ItemController {
     private static final String USER_ID_HEADER = "X-Sharer-User-Id";
-    private final ItemService itemService;
+    private final ItemClient itemClient;
+
 
     @PostMapping
-    public ItemDto saveItem(@RequestBody @Valid ItemDto itemDto,
-                            @RequestHeader(name = USER_ID_HEADER) Long userId) {
+    public ResponseEntity<Object> saveItem(@RequestBody @Valid ItemDto itemDto,
+                                           @RequestHeader(name = USER_ID_HEADER) Long userId) {
         log.info("Получен POST-запрос /items {} ", itemDto);
-        return ItemMapper.toItemDto(itemService.saveItem(itemDto, userId));
+        ResponseEntity<Object> response = itemClient.createItem(userId.intValue(), itemDto);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 
     @PatchMapping("/{itemId}")
