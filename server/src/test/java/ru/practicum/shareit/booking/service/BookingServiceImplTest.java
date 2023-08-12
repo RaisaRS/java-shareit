@@ -98,7 +98,6 @@ public class BookingServiceImplTest {
                 .id(1L)
                 .name("Щётка для обуви")
                 .description("Стандартная щётка для обуви")
-                .ownerId(1L)
                 .available(true)
                 .requestId(1L)
                 .build();

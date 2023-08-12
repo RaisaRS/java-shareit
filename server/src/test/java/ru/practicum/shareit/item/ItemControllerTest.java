@@ -61,7 +61,6 @@ public class ItemControllerTest {
                 .name("Щётка для обуви")
                 .description("Стандартная щётка для обуви")
                 .available(true)
-                .ownerId(1L)
                 .lastBooking(null)
                 .nextBooking(null)
                 .requestId(1L)

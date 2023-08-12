@@ -134,7 +134,6 @@ public class ItemServiceTest {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .ownerId(user.getId())
                 .available(item.getAvailable())
                 .requestId(item.getRequest())
                 .build();
@@ -164,7 +163,6 @@ public class ItemServiceTest {
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
-                .ownerId(user.getId())
                 .available(item.getAvailable())
                 .requestId(item.getRequest())
                 .build();

@@ -72,7 +72,6 @@ public class BookingControllerTest {
                 .description("Стандартная щётка для обуви")
                 .available(true)
                 .requestId(1L)
-                .ownerId(1L)
                 .build();
 
 
