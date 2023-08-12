@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.*;
 import ru.practicum.shareit.booking.dto.BookingDtoShort;
+import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -18,12 +19,12 @@ import java.util.List;
 public class ItemDto {
 
     private Long id;
-    @NotBlank(message = "Name не должен быть пустым")
+    @NotBlank(groups = {Validation.Post.class}, message = "Name не должен быть пустым")
     private String name;
-    @NotBlank(message = "description не должен быть пустым")
+    @NotBlank(groups = {Validation.Post.class}, message = "description не должен быть пустым")
     private String description;
-    private Long ownerId;
-    @NotNull(message = "available не должен отсутствовать")
+    //private Long ownerId;
+    @NotNull(groups = {Validation.Post.class}, message = "available не должен отсутствовать")
     private Boolean available;
     private List<CommentDto> comments;
     private BookingDtoShort lastBooking;

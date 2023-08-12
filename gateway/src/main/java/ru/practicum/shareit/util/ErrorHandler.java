@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exceptions.*;
-import ru.practicum.shareit.util.ErrorResponse;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolationException;
 
@@ -25,10 +25,17 @@ public class ErrorHandler {
         return new ErrorResponse(e.getMessage(), "Недопустимый аргумент метода");
     }
 
-//    @ExceptionHandler
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public ErrorResponse handleThrowable(final RuntimeException e) {
-//        log.error("Получен статус 500 Internal server error {}", e.getMessage(), e);
-//        return new ErrorResponse(e.getMessage(), "Сервер прилёг отдохнуть. Но обещал вернуться;)");
-//    }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIllegalArgumentException(final IllegalArgumentException e) {
+        return new ErrorResponse(e.getMessage(), "Неправильный аргумент метода");
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleThrowable(final RuntimeException e) {
+        log.error("Получен статус 500 Internal server error {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage(), "Сервер прилёг отдохнуть. Но обещал вернуться;)");
+    }
+
 }

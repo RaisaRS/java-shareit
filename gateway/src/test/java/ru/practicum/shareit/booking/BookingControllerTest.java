@@ -12,7 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.State;
 import ru.practicum.shareit.util.ErrorHandler;
@@ -29,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ContextConfiguration(classes = {BookingController.class, ErrorHandler.class})
+//@SpringBootTest(classes = ShareItGateway.class)
 public class BookingControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
@@ -346,19 +346,6 @@ public class BookingControllerTest {
         verify(bookingClient, never()).updateBooking(anyLong(), anyLong(), anyBoolean());
     }
 
-//    @SneakyThrows
-//    @Test
-//    public void updateBooking_WrongBookingId() {
-//        Long wrongBookingId = -999L;
-//
-//        mockMvc.perform(patch("/bookings/" + wrongBookingId)
-//                        .param("approved", "true")
-//                        .header("X-Sharer-User-Id", userId))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(bookingClient, never()).updateBooking(anyLong(), anyLong(), anyBoolean());
-//    }
-//
 
     @SneakyThrows
     @Test

@@ -215,6 +215,7 @@ public class ItemServiceTest {
         //CommentDto commentDto = toCommentDto(comment);
         CommentDto commentDto1 = itemService.postComment(1L, 1L, commentDto);
 
+        commentDto.setId(commentDto1.getId());
         assertEquals(commentDto1, commentDto);
     }
 
@@ -272,3 +273,4 @@ public class ItemServiceTest {
         });
     }
 }
+

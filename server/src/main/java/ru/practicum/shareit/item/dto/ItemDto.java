@@ -22,7 +22,6 @@ public class ItemDto {
     private String name;
     @NotBlank(message = "description не должен быть пустым")
     private String description;
-    private Long ownerId;
     @NotNull(message = "available не должен отсутствовать")
     private Boolean available;
     private List<CommentDto> comments;

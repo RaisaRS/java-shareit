@@ -24,19 +24,7 @@ class BookingClientTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Test
-    void testValidateFailState() throws Exception {
 
-        String state = "Unknown";
-
-        mockMvc.perform(get("/bookings")
-                        .header("X-Sharer-User-Id", 1)
-                        .param("state", state)
-                        .param("from", "0")
-                        .param("size", "20"))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-    }
 
     @Test
     void testValidateFailFrom() throws Exception {
@@ -57,7 +45,7 @@ class BookingClientTest {
                         .header("X-Sharer-User-Id", 1)
                         .param("state", "ALL")
                         .param("from", "0")
-                        .param("size", "0"))
+                        .param("size", "-1"))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }

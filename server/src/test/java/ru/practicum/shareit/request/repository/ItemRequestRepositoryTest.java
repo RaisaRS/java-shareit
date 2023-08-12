@@ -18,6 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+//@SpringBootTest(classes = ShareItServer.class)
 @DataJpaTest
 public class ItemRequestRepositoryTest {
     @Autowired

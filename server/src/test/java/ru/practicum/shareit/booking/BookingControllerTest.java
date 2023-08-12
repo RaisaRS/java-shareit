@@ -5,7 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,7 +36,7 @@ import static ru.practicum.shareit.mappers.BookingMapper.toBookingDto;
 import static ru.practicum.shareit.mappers.ItemMapper.toItem;
 
 //@SpringBootTest
-@SpringBootTest
+@WebMvcTest
 @ContextConfiguration(classes = {BookingController.class, ErrorHandler.class})
 public class BookingControllerTest {
 

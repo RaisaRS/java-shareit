@@ -49,11 +49,11 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> updateItem(ItemDto itemDto, Long userId) {
-        return patch("/" + itemDto, userId);
+        return patch("/" + itemDto.getId(), userId, itemDto);
     }
 
     public ResponseEntity<Object> getItemById(Long userId, Long itemId) {
-        return patch("/" + userId, itemId);
+        return get("/" + itemId, userId);
     }
 
     public ResponseEntity<Object> deleteItem(Long userId, Long itemId) {

@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestDtoWithRequest;
 import ru.practicum.shareit.request.service.ItemRequestService;
-import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.util.ErrorHandler;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
-@ContextConfiguration(classes = UserController.class)
+@ContextConfiguration(classes = {RequestController.class, ErrorHandler.class})
 public class RequestControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
