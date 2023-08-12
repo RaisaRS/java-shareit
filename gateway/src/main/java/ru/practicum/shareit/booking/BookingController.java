@@ -20,85 +20,87 @@ import javax.validation.constraints.Min;
 public class BookingController {
 
 
-	private static final String USER_ID_HEADER = "X-Sharer-User-Id";
-	private final BookingClient bookingClient;
+    private static final String USER_ID_HEADER = "X-Sharer-User-Id";
+    private final BookingClient bookingClient;
 
-	@PostMapping
-	public ResponseEntity<Object> saveBooking(@RequestHeader(name = USER_ID_HEADER)
-												  @Min(value = 1, message = "User ID must be more than 0") Long userId,
-								  @RequestBody @Validated BookingDto bookingDto) {
-		log.info("Получен POST-запрос /bookings {} ", bookingDto);
-		ResponseEntity<Object> response = bookingClient.saveBooking(userId, bookingDto);
-		log.info("Ответ на запрос: {}", response);
-		return response;
-	}
+    @PostMapping
+    public ResponseEntity<Object> saveBooking(
+            @RequestHeader(name = USER_ID_HEADER)
+            @Min(value = 1, message = "User ID must be more than 0") Long userId,
+            @RequestBody @Validated BookingDto bookingDto
+    ) {
+        log.info("Получен POST-запрос /bookings {} ", bookingDto);
+        ResponseEntity<Object> response = bookingClient.saveBooking(userId, bookingDto);
+        log.info("Ответ на запрос: {}", response);
+        return response;
+    }
 
-	@PatchMapping("/{bookingId}")
-	public ResponseEntity<Object> updateBooking(@RequestHeader(name = USER_ID_HEADER)
-															 @Min(value = 1, message = "User ID must be more than 0")
-															 Long userId,
-											 @PathVariable Long bookingId,
-											 @RequestParam boolean approved) {
-		log.info("Получен PATCH-запрос /bookingId подтверждения/отмены бронирования");
-		ResponseEntity<Object> response = bookingClient.updateBooking(userId, bookingId, approved);
-		log.info("Ответ на запрос: {}", response);
-		//return toBookingDto(bookingService.confirmOrCancelBooking(userId, bookingId, approved));
-		return response;
-	}
+    @PatchMapping("/{bookingId}")
+    public ResponseEntity<Object> updateBooking(@RequestHeader(name = USER_ID_HEADER)
+                                                @Min(value = 1, message = "User ID must be more than 0")
+                                                Long userId,
+                                                @PathVariable Long bookingId,
+                                                @RequestParam boolean approved) {
+        log.info("Получен PATCH-запрос /bookingId подтверждения/отмены бронирования");
+        ResponseEntity<Object> response = bookingClient.updateBooking(userId, bookingId, approved);
+        log.info("Ответ на запрос: {}", response);
+        //return toBookingDto(bookingService.confirmOrCancelBooking(userId, bookingId, approved));
+        return response;
+    }
 
-	@GetMapping("/{bookingId}")
-	public ResponseEntity<Object> getBookingForOwnerOrBooker(@RequestHeader(name = USER_ID_HEADER)
-																 @Min(value = 1, message = "User ID must be more than 0")
-																 Long userId,
-												 @PathVariable  @Min(value = 0,
-														 message = "Booking ID must be more than 0") Long bookingId) {
-		log.info("Получен GET-запрос просмотра бронирования владельцем предмета или" +
-				" пользователем, бронирующим предмет");
-		ResponseEntity<Object> response = bookingClient.getBooking(userId,bookingId);
-		//return toBookingDto(bookingService.getBookingForOwnerOrBooker(userId, bookingId));
-		return response;
-	}
+    @GetMapping("/{bookingId}")
+    public ResponseEntity<Object> getBookingForOwnerOrBooker(@RequestHeader(name = USER_ID_HEADER)
+                                                             @Min(value = 1, message = "User ID must be more than 0")
+                                                             Long userId,
+                                                             @PathVariable @Min(value = 0,
+                                                                     message = "Booking ID must be more than 0") Long bookingId) {
+        log.info("Получен GET-запрос просмотра бронирования владельцем предмета или" +
+                " пользователем, бронирующим предмет");
+        ResponseEntity<Object> response = bookingClient.getBooking(userId, bookingId);
+        //return toBookingDto(bookingService.getBookingForOwnerOrBooker(userId, bookingId));
+        return response;
+    }
 
-	@GetMapping
-	public ResponseEntity<Object> getAllBookingsForBooker(@RequestHeader(name = USER_ID_HEADER)
-															  @Min(value = 1, message = "User ID must be more than 0")
-															  Long userId,
-													@RequestParam(defaultValue = "ALL") String stateParam,
-													@RequestParam(required = false, defaultValue = "0") @Min(value = 0,
-															message = "Parameter 'from' must be more than 0") int from,
-													@RequestParam(required = false, defaultValue = "10") @Min(value = 0,
-															message = "Parameter 'size' must be more than 0") int size) {
-		log.info("Получен GET-запрос просмотра всех забронированных вещей и статусов их бронирования " +
-				"для  пользователя");
-		State state = State.from(stateParam)
-				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-		log.info("Looking for bookings of owner {} with state {}", userId, stateParam);
-		ResponseEntity<Object> response = bookingClient.getOwnerBookings(userId, state, from, size);
+    @GetMapping
+    public ResponseEntity<Object> getAllBookingsForBooker(@RequestHeader(name = USER_ID_HEADER)
+                                                          @Min(value = 1, message = "User ID must be more than 0")
+                                                          Long userId,
+                                                          @RequestParam(name="state", defaultValue = "ALL") String stateParam,
+                                                          @RequestParam(required = false, defaultValue = "0") @Min(value = 0,
+                                                                  message = "Parameter 'from' must be more than 0") int from,
+                                                          @RequestParam(required = false, defaultValue = "10") @Min(value = 0,
+                                                                  message = "Parameter 'size' must be more than 0") int size) {
+        log.info("Получен GET-запрос просмотра всех забронированных вещей и статусов их бронирования " +
+                "для  пользователя");
+        State state = State.from(stateParam)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+        log.info("Looking for bookings of owner {} with state {}", userId, stateParam);
+        ResponseEntity<Object> response = bookingClient.getOwnerBookings(userId, state, from, size);
 //		return bookingService.getAllBookingsForUser(userId, state, false, from, size).stream()
 //				.map(BookingMapper::toBookingDto)
 //				.collect(Collectors.toList());
-		return  response;
-	}
+        return response;
+    }
 
-	@GetMapping("/owner")
-	public ResponseEntity<Object> getAllBookingsForOwner(@RequestHeader(name = USER_ID_HEADER)
-															 @Min(value = 1, message = "User ID must be more than 0")
-															 Long ownerId,
-														 @RequestParam(defaultValue = "ALL") String stateParam,
-														 @RequestParam(required = false, defaultValue = "0")
-															 @Min(value = 0, message = "Parameter 'from' must be more than 0") int from,
-														 @RequestParam(required = false, defaultValue = "10") @Min(value = 0,
-																 message = "Parameter 'size' must be more than 0") int size) {
-		log.info("Получен GET-запрос просмотра всех забронированных вещей и статусов их бронирования " +
-				"для владельца");
-		State state = State.from(stateParam)
-				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-		ResponseEntity<Object> response = bookingClient.getUserBookings(ownerId, state, from,size);
+    @GetMapping("/owner")
+    public ResponseEntity<Object> getAllBookingsForOwner(@RequestHeader(name = USER_ID_HEADER)
+                                                         @Min(value = 1, message = "User ID must be more than 0")
+                                                         Long ownerId,
+                                                         @RequestParam(defaultValue = "ALL") String stateParam,
+                                                         @RequestParam(required = false, defaultValue = "0")
+                                                         @Min(value = 0, message = "Parameter 'from' must be more than 0") int from,
+                                                         @RequestParam(required = false, defaultValue = "10") @Min(value = 0,
+                                                                 message = "Parameter 'size' must be more than 0") int size) {
+        log.info("Получен GET-запрос просмотра всех забронированных вещей и статусов их бронирования " +
+                "для владельца");
+        State state = State.from(stateParam)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+        ResponseEntity<Object> response = bookingClient.getUserBookings(ownerId, state, from, size);
 //		return bookingService.getAllBookingsForUser(userId, state, true, from, size).stream()
 //				.map(BookingMapper::toBookingDto)
 //				.collect(Collectors.toList());
-		return  response;
-	}
+        return response;
+    }
 
 //	@GetMapping
 //	public ResponseEntity<Object> getBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
