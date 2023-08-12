@@ -86,7 +86,7 @@ public class BookingController {
     public ResponseEntity<Object> getAllBookingsForOwner(@RequestHeader(name = USER_ID_HEADER)
                                                          @Min(value = 1, message = "User ID must be more than 0")
                                                          Long ownerId,
-                                                         @RequestParam(defaultValue = "ALL") String stateParam,
+                                                         @RequestParam(name = "state", defaultValue = "ALL") String stateParam,
                                                          @RequestParam(required = false, defaultValue = "0")
                                                          @Min(value = 0, message = "Parameter 'from' must be more than 0") int from,
                                                          @RequestParam(required = false, defaultValue = "10") @Min(value = 0,
