@@ -117,12 +117,12 @@ public class ItemServiceImpl implements ItemService {
             throw new MethodArgumentNotValidException(HttpStatus.BAD_REQUEST, "Неправильный параметр пагинации");
         }
         Pageable pageable = PageRequest.of(from / size, size);
-        if (itemRepository.findAllByOwnerId(userId, pageable) == null) {
+        if (itemRepository.findAllByOwnerIdOrderById(userId, pageable) == null) {
             log.info("У пользователя {} нет предметов для аренды ", userId);
             throw new ItemNotFoundException("У пользователя нет предметов для аренды " + userId);
         }
 
-        List<ItemDto> itemsList = itemRepository.findAllByOwnerId(userId, pageable)
+        List<ItemDto> itemsList = itemRepository.findAllByOwnerIdOrderById(userId, pageable)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
