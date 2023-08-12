@@ -151,9 +151,9 @@ public class ItemServiceImpl implements ItemService {
             pageable = PageRequest.of(from / size, size);
         }
         log.info("Выполнен поиск среди предметов по : {}.", text);
-        return itemRepository.searchItem(textToLowerCase, pageable)
+        return itemRepository.findItemByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(textToLowerCase, textToLowerCase, pageable)
                 .stream()
-                .map(item -> ItemMapper.toItemDto(item))
+                .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 

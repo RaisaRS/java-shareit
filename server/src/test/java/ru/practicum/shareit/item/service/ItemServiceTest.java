@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.booking.dto.Status;
 import ru.practicum.shareit.booking.model.Booking;
@@ -193,6 +194,8 @@ public class ItemServiceTest {
 
     @Test
     void searchItemNullTest() {
+        when(itemRepository.findItemByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(any(), any(), any()))
+                .thenReturn(Page.empty());
 
         assertEquals(List.of(), itemService.searchItem("".toLowerCase(), 0, 20));
         assertEquals(List.of(), itemService.searchItem(" ", 0, 20));

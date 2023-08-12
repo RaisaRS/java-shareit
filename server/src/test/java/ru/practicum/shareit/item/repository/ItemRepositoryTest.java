@@ -51,7 +51,7 @@ public class ItemRepositoryTest {
     @Test
     void searchItemTest() {
         Pageable pageable = PageRequest.of(0, 2);
-        List<Item> itemList = itemRepository.searchItem("Щётка".toLowerCase(), pageable);
+        List<Item> itemList = itemRepository.findItemByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue("Щётка".toLowerCase(), "Щётка".toLowerCase(), pageable).getContent();
 
         assertEquals(itemList.get(0).getId(), item.getId());
         assertEquals(itemList.get(0).getName(), "Щётка для обуви");
