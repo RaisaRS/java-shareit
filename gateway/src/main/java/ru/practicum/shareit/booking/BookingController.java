@@ -75,7 +75,7 @@ public class BookingController {
         State state = State.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
         log.info("Looking for bookings of owner {} with state {}", userId, stateParam);
-        ResponseEntity<Object> response = bookingClient.getOwnerBookings(userId, state, from, size);
+        ResponseEntity<Object> response = bookingClient.getUserBookings(userId, state, from, size);
 //		return bookingService.getAllBookingsForUser(userId, state, false, from, size).stream()
 //				.map(BookingMapper::toBookingDto)
 //				.collect(Collectors.toList());
@@ -95,7 +95,7 @@ public class BookingController {
                 "для владельца");
         State state = State.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        ResponseEntity<Object> response = bookingClient.getUserBookings(ownerId, state, from, size);
+        ResponseEntity<Object> response = bookingClient.getOwnerBookings(ownerId, state, from, size);
 //		return bookingService.getAllBookingsForUser(userId, state, true, from, size).stream()
 //				.map(BookingMapper::toBookingDto)
 //				.collect(Collectors.toList());
