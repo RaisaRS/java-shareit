@@ -3,17 +3,16 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.comment.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.Collection;
-import java.util.List;
-
-import static ru.practicum.shareit.mappers.ItemMapper.toItemDto;
+import javax.validation.constraints.NotNull;
 
 /**
  * TODO Sprint add-controllers.
@@ -28,57 +27,80 @@ public class ItemController {
 
 
     @PostMapping
-    public ResponseEntity<Object> saveItem(@RequestBody @Valid ItemDto itemDto,
-                                           @RequestHeader(name = USER_ID_HEADER) Long userId) {
+    public ResponseEntity<Object> saveItem(@NotNull @Validated(Validation.Post.class)@RequestBody ItemDto itemDto,
+                                           @RequestHeader(name = USER_ID_HEADER)
+                                           @Min(value = 1, message = "User ID must be more than 0") Long userId) {
         log.info("Получен POST-запрос /items {} ", itemDto);
-        ResponseEntity<Object> response = itemClient.createItem(userId.intValue(), itemDto);
+        ResponseEntity<Object> response = itemClient.saveItem(itemDto, userId);
+        log.info("Ответ на запрос: {}", response); //сюда смотреть, пример,
+        return response;                           //проверить название методов в сервисе
+    }
+
+    @PatchMapping("/{itemId}")
+    public ResponseEntity<Object> updateItem(@RequestHeader(name = USER_ID_HEADER)
+                                                 @Min(value = 1, message = "User ID must be more than 0") Long userId,
+                                             @NotNull @Validated(Validation.Patch.class) @RequestBody ItemDto itemDto,
+                                             @PathVariable @Min(value = 1, message = "Item ID must be more than 0")
+                                                 Long itemId) {
+        log.info("Получен PATCH-запрос /itemId {} ", itemId);
+        itemDto.setId(itemId);
+        ResponseEntity<Object> response = itemClient.updateItem(itemDto, userId);
         log.info("Ответ на запрос: {}", response);
         return response;
     }
 
-    @PatchMapping("/{itemId}")
-    public ItemDto updateItem(@RequestHeader(name = USER_ID_HEADER) Long userId,
-                              @RequestBody ItemDto itemDto, @PathVariable Long itemId) {
-        log.info("Получен PATCH-запрос /itemId {} ", itemId);
-        itemDto.setId(itemId);
-        return ItemMapper.toItemDto(itemService.updateItem(itemDto, userId));
-    }
-
     @GetMapping("/{itemId}")
-    public ItemDto getItemById(@RequestHeader(name = USER_ID_HEADER) Long userId,
-                               @PathVariable Long itemId) {
+    public ResponseEntity<Object> getItemById(@RequestHeader(name = USER_ID_HEADER, required = false)
+                                                  @Min(value = 1, message = "User ID must be more than 0") Long userId,
+                               @PathVariable  @Min(value = 1, message = "Item ID must be more than 0") Long itemId) {
         log.info("Получен GET-запрос /itemId {} ", itemId);
-        return itemService.getItemById(userId, itemId);
+        ResponseEntity<Object> response = itemClient.getItemById(userId, itemId);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 
     @GetMapping
-    public List<ItemDto> getItemsByUser(@RequestHeader(name = USER_ID_HEADER) Long userId,
-                                        @RequestParam(name = "from", defaultValue = "0") int from,
-                                        @RequestParam(name = "size", defaultValue = "20") int size) {
+    public ResponseEntity<Object> getItemsByUser(@RequestHeader(name = USER_ID_HEADER, required = false) Long userId,
+                                        @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                        @RequestParam(name = "size", defaultValue = "20") Integer size) {
         log.info("Получен GET-запрос: список всех предметов одного пользователя {} ", userId);
-        return itemService.getItemsByUser(userId, from, size);
+        ResponseEntity<Object> response = itemClient.getItemByUser(userId, from, size);
+        log.info("Ответ на запрос: {}", response);
+        return response; // проверить
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> searchItem(@RequestParam @NotBlank String text,
-                                          @RequestParam(name = "from", defaultValue = "0") int from,
-                                          @RequestParam(name = "size", defaultValue = "20") int size) {
-        log.info("Получен GET-запрос /text {} ", text);
-        return itemService.searchItem(text, from, size);
+    public ResponseEntity<Object> searchItem(@RequestHeader(name = USER_ID_HEADER)
+                                                 @Min(value = 1, message = "User ID must be more than 0") Long userId,
+                                             @RequestParam @NotBlank String text,
+                                          @RequestParam(name = "from", defaultValue = "0") @Min(value = 0,
+                                                  message = "Parameter 'from' must be more than 0") Integer from,
+                                          @RequestParam(name = "size", defaultValue = "20") @Min(value = 0,
+                                                  message = "Parameter 'size' must be more than 0") Integer size) {
+        log.info("Получен GET-запрос /text {} , от ID пользователя: {} ", text, userId);
+        ResponseEntity<Object> response = itemClient.searchItem(userId, text, from,size);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 
     @PostMapping("/{itemId}/comment")
-    public CommentDto saveComment(@RequestHeader(name = USER_ID_HEADER) Long userId,
-                                  @PathVariable Long itemId,
-                                  @RequestBody CommentDto commentDto) {
-        log.info("Получен POST-запрос: добавление отзыва о бронировании предмета {} ", itemId);
-        return itemService.postComment(userId, itemId, commentDto);
+    public ResponseEntity<Object> postComment(@RequestHeader(name = USER_ID_HEADER)  @Min(value = 1,
+            message = "User ID must be more than 0") Long userId,
+                                  @PathVariable @Min(value = 1, message = "Item ID must be more than 0") Long itemId,
+                                  @RequestBody @Validated CommentDto commentDto) {
+        log.info("Получен POST-запрос: добавление отзыва {} о бронировании ID предмета {} от ID пользователя {}",
+                commentDto, itemId, userId);
+        ResponseEntity<Object> response = itemClient.postComment(userId, itemId, commentDto);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 
     @DeleteMapping("/{itemId}")
-    public void deleteItem(@RequestHeader(name = USER_ID_HEADER) Long userId,
-                           @PathVariable long itemId) {
-        log.info("Получен DELETE- запрос на уаление предмета {} ", itemId);
-        itemService.deleteItemById(userId, itemId);
+    public void deleteItem(@RequestHeader(name = USER_ID_HEADER) @Min(value = 1,
+            message = "User ID must be more than 0") Long userId,
+                           @PathVariable @Min(value = 1, message = "Item ID must be more than 0") Long itemId) {
+        log.info("Получен DELETE- запрос на уаление предмета, ID: {}, ID от пользователя {}", itemId, userId);
+        ResponseEntity<Object> response = itemClient.deleteItem(userId, itemId);
+        log.info("Ответ на запрос: {}", response);
     }
 }

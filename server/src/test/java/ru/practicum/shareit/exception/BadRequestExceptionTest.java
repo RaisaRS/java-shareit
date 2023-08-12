@@ -3,7 +3,7 @@ package ru.practicum.shareit.exception;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
-import ru.practicum.shareit.exceptions.BadRequestException;
+import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,10 +14,10 @@ public class BadRequestExceptionTest {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         String message = "Bad Request";
 
-        BadRequestException badRequestException = new BadRequestException(httpStatus, message);
+        MethodArgumentNotValidException methodArgumentNotValidException = new MethodArgumentNotValidException(httpStatus, message);
 
-        assertEquals(httpStatus, badRequestException.getStatus());
-        assertEquals(message, badRequestException.getReason());
+        assertEquals(httpStatus, methodArgumentNotValidException.getStatus());
+        assertEquals(message, methodArgumentNotValidException.getReason());
     }
 
     @Test
@@ -25,9 +25,9 @@ public class BadRequestExceptionTest {
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR; // Custom HTTP Status
         String message = "Internal Server Error";
 
-        BadRequestException badRequestException = new BadRequestException(httpStatus, message);
+        MethodArgumentNotValidException methodArgumentNotValidException = new MethodArgumentNotValidException(httpStatus, message);
 
-        assertEquals(httpStatus, badRequestException.getStatus());
-        assertEquals(message, badRequestException.getReason());
+        assertEquals(httpStatus, methodArgumentNotValidException.getStatus());
+        assertEquals(message, methodArgumentNotValidException.getReason());
     }
 }

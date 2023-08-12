@@ -2,13 +2,12 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.RequestDto;
-import ru.practicum.shareit.request.dto.RequestDtoWithRequest;
-import ru.practicum.shareit.request.service.ItemRequestService;
 
-import javax.validation.Valid;
-import java.util.List;
+import javax.validation.constraints.Min;
 
 /**
  * TODO Sprint add-item-requests.
@@ -19,34 +18,56 @@ import java.util.List;
 @RequestMapping(path = "/requests")
 public class RequestController {
     private static final String USER_ID_HEADER = "X-Sharer-User-Id";
-    private final ItemRequestService itemRequestService;
+    private final ItemRequestClient requestClient;
 
     @PostMapping
-    public RequestDto addItemRequest(@RequestHeader(name = USER_ID_HEADER) Long userId,
-                                     @Valid @RequestBody(required = false) RequestDto requestDto) {
+    public ResponseEntity<Object> addItemRequest(@RequestHeader(name = USER_ID_HEADER) @Min(value = 1,
+            message = "User id should be more than 0")Long userId,
+                                                 @Validated @RequestBody(required = false) RequestDto requestDto) {
         log.info("Получен POST-запрос /requests {} ", requestDto);
-        return itemRequestService.addItemRequest(requestDto, userId);
+        ResponseEntity<Object> response = requestClient.addItemRequest(userId, requestDto);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 
     @GetMapping
-    public List<RequestDtoWithRequest> getRequests(@RequestHeader(name = USER_ID_HEADER) Long userId) {
-        log.info("Получен GET-запрос на получение списка своих запросов вместе с данными о них.");
-        return itemRequestService.getItemRequest(userId);
+    public ResponseEntity<Object> getRequests(@RequestHeader(name = USER_ID_HEADER) @Min(value = 1,
+            message = "User id should be more than 0") Long userId,
+                                                   @RequestParam(defaultValue = "0") @Min(value = 0,
+                                                           message = "Parameter 'from' must be more than 0") Integer from,
+                                                   @RequestParam(defaultValue = "10") @Min(value = 0,
+                                                           message = "Parameter 'size' must be more than 0") Integer size) {
+        log.info("Получен GET-запрос от ID пользователя {} на получение списка своих запросов вместе с данными о них." +
+                " Результаты возвращаются постранично от {}, в количестве {}.", userId, from, size);
+        ResponseEntity<Object> response = requestClient.requestsGet(userId, from, size);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 
     @GetMapping(path = "/all")
-    public List<RequestDtoWithRequest> getAllRequests(@RequestHeader(name = USER_ID_HEADER) Long userId,
-                                                      @RequestParam(name = "from", defaultValue = "0") int from,
-                                                      @RequestParam(name = "size", defaultValue = "20") int size) {
-        log.info("Получен GET-запрос на получение списка запросов, созданных другимим пользователями. " +
-                "Результаты возвращаются постранично от {} в количестве {}.", from, size);
-        return itemRequestService.getAllItemRequest(userId, from, size);
+    public ResponseEntity<Object> getAllRequests(@RequestHeader(name = USER_ID_HEADER) @Min(value = 1,
+            message = "User id should be more than 0") Long userId,
+                                                      @RequestParam(name = "from", defaultValue = "0") @Min(value = 0,
+                                                              message = "Parameter 'from' must be more than 0") Integer from,
+                                                      @RequestParam(name = "size", defaultValue = "20") @Min(value = 0,
+                                                              message = "Parameter 'size' must be more than 0") Integer size) {
+        log.info("Получен GET-запрос от ID польбзователя {} на получение списка запросов, " +
+                "созданных другимим пользователями. " +
+                "Результаты возвращаются постранично от {} в количестве {}.", userId, from, size);
+        ResponseEntity<Object> response = requestClient.getRequestsAll(userId, from, size);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 
     @GetMapping("/{requestId}")
-    public RequestDtoWithRequest getRequestById(@RequestHeader(name = USER_ID_HEADER) Long userId,
-                                                @PathVariable Long requestId) {
-        log.info("Получен GET-запрос на получение данных об одном конкретном запросе с данными об ответах.");
-        return itemRequestService.getRequestById(userId, requestId);
+    public ResponseEntity<Object> getRequestById(@RequestHeader(name = USER_ID_HEADER) @Min(value = 1,
+            message = "User id should be more than 0") Long userId,
+                                                @PathVariable @Min(value = 1,
+                                                        message = "Request id should be more than 0")  Long requestId) {
+        log.info("Получен GET-запрос от ID пользователя {} " +
+                "на получение данных об одном конкретном запросе ID: {} с данными об ответах.", userId, requestId);
+        ResponseEntity<Object> response = requestClient.getRequestById(userId, requestId);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 }

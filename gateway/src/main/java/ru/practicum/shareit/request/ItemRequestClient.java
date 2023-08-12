@@ -8,6 +8,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
+import ru.practicum.shareit.request.dto.RequestDto;
 
 import java.util.Map;
 
@@ -17,23 +18,29 @@ public class ItemRequestClient extends BaseClient {
 
     @Autowired
     public ItemRequestClient(@Value("${shareit.server.url}") String serverUrl, RestTemplateBuilder builder) {
-        super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl + API_PREFIX)).requestFactory(HttpComponentsClientHttpRequestFactory::new).build());
+        super(builder.uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl +
+                API_PREFIX)).requestFactory(HttpComponentsClientHttpRequestFactory::new).build());
     }
 
-    public ResponseEntity<Object> addItemRequestService(int userId, RequestDTO requestDTO) {
-        return post("", userId, requestDTO);
+    public ResponseEntity<Object> addItemRequest(Long userId, RequestDto requestDto) {
+        return post("", userId, requestDto);
     }
 
-    public ResponseEntity<Object> requestsGet(int userId) {
-        return get("", userId);
+    public ResponseEntity<Object> requestsGet(Long userId, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of(
+                "from", from,
+                "size", size);
+        return get("?from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> requestsAllGet(int userId, int from, int size) {
-        Map<String, Object> parameters = Map.of("from", from, "size", size);
+    public ResponseEntity<Object> getRequestsAll(Long userId, Integer from, Integer size) {
+        Map<String, Object> parameters = Map.of(
+                "from", from,
+                "size", size);
         return get("/all?from={from}&size={size}", userId, parameters);
     }
 
-    public ResponseEntity<Object> getRequestById(int userId, int requestId) {
+    public ResponseEntity<Object> getRequestById(Long userId, Long requestId) {
         return get("/" + requestId, userId);
     }
 }

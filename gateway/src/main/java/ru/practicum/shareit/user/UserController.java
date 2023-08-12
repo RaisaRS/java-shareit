@@ -2,19 +2,14 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.mappers.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.validation.Validation;
 
-import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
-import java.util.stream.Collectors;
-
-import static ru.practicum.shareit.mappers.UserMapper.*;
 
 /**
  * TODO Sprint add-controllers.
@@ -26,39 +21,55 @@ import static ru.practicum.shareit.mappers.UserMapper.*;
 @Validated
 public class UserController {
 
-    private final UserService userService;
+    private final UserClient userClient;
 
     @GetMapping
-    public Collection<UserDto> getAllUsers() {
+    public ResponseEntity<Object> getAllUsers() {
         log.info("Получен GET-апрос /users");
-        return userService.getAllUsers().stream()
-                .map(UserMapper::toUserDto)
-                .collect(Collectors.toList());
+        ResponseEntity<Object> response = userClient.getAllUsers();
+        log.info("Ответ на запрос: {}", response);
+       // return userService.getAllUsers().stream()
+        //        .map(UserMapper::toUserDto)
+         //       .collect(Collectors.toList());
+        return response;
     }
 
     @GetMapping("{userId}")
-    public User getUserById(@PathVariable @Valid Long userId) {
+    public ResponseEntity<Object> getUserById(@PathVariable  @Min(value = 1, message = "User ID must be more than 0")
+                                                  Long userId) {
         log.info("Получен GET-запрос /userId {} ", userId);
-        return userService.getUserById(userId);
+        ResponseEntity<Object> response = userClient.getUser(userId);
+        log.info("Ответ на запрос: {}", response);
+        return response;
     }
 
     @PostMapping
-    public UserDto saveUser(@NotNull @Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> saveUser(@NotNull @Validated(Validation.Post.class) @RequestBody UserDto userDto) {
         log.info("Получен POST-запрос /users {} ", userDto);
-        User user = toUser(userDto);
-        return toUserDto(userService.saveUser(user));
+        //User user = toUser(userDto);
+        ResponseEntity<Object> response = userClient.addUser(userDto);
+        log.info("Ответ на запрос: {}", response);
+        //return toUserDto(userService.saveUser(user));
+        return response;
     }
 
     @DeleteMapping("{userId}")
-    public void deleteUser(@Valid @PathVariable Long userId) {
-        userService.deleteUser(userId);
+    public void deleteUser(@PathVariable @Min(value = 1, message = "User ID must be more than 0") Long userId) {
         log.info("Получен DELETE-запрос /users/:userId {} ", userId);
+        ResponseEntity<Object> response = userClient.deleteUser(userId);
+        log.info("Ответ на запрос: {}", response);
+
     }
 
     @PatchMapping("/{userId}")
-    public UserDto updateUser(@RequestBody UserDto userDto, @PathVariable Long userId) {
-        User user = toUserWithId(userId, userDto);
-        log.info("Получен PATCH-запрос /userId {} ", userId);
-        return toUserDto(userService.updateUser(user));
+    public ResponseEntity<Object> updateUser(@NotNull @Validated(Validation.Patch.class) @RequestBody UserDto userDto,
+                              @PathVariable @Min(value = 1,
+                                      message = "User ID must be more than 0") Long userId) {
+        //User user = toUserWithId(userId, userDto);
+        log.info("Получен PATCH-запрос /userId {} на изменение данных: {} ", userId, userDto);
+        ResponseEntity<Object> response = userClient.updateUser(userId, userDto);
+        log.info("Ответ на запрос: {}", response);
+        //return toUserDto(userService.updateUser(user));
+        return response;
     }
 }

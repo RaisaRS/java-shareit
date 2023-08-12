@@ -24,6 +24,6 @@ public class RequestDto {
     private String description;
     private UserDto requestor;
     @JsonProperty("created")
-    private LocalDateTime created;
+    private LocalDateTime created = LocalDateTime.now();
     private List<ItemDtoReq> items;
 }

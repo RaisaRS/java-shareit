@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.validation.Validation;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -16,10 +17,10 @@ import java.util.Objects;
 public class UserDto {
 
     private Long id;
-    @NotBlank(message = "имя пользователя не моет быть пустым")
+    @NotBlank(groups = Validation.Post.class)
     private String name;
-    @NotBlank(message = "Email не должен быть пустым")
     @Email
+    @NotBlank(groups = Validation.Post.class)
     private String email;
 
     @Override

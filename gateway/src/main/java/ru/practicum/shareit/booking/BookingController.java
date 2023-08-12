@@ -7,12 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.booking.dto.BookItemRequestDto;
-import ru.practicum.shareit.booking.dto.BookingState;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.State;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Min;
 
 @Controller
 @RequestMapping(path = "/bookings")
@@ -20,29 +18,110 @@ import javax.validation.constraints.PositiveOrZero;
 @Slf4j
 @Validated
 public class BookingController {
+
+
+	private static final String USER_ID_HEADER = "X-Sharer-User-Id";
 	private final BookingClient bookingClient;
 
-	@GetMapping
-	public ResponseEntity<Object> getBookings(@RequestHeader("X-Sharer-User-Id") long userId,
-			@RequestParam(name = "state", defaultValue = "all") String stateParam,
-			@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-			@Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
-		BookingState state = BookingState.from(stateParam)
-				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-		log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
-		return bookingClient.getBookings(userId, state, from, size);
+	@PostMapping
+	public ResponseEntity<Object> saveBooking(@RequestHeader(name = USER_ID_HEADER)
+												  @Min(value = 1, message = "User ID must be more than 0") Long userId,
+								  @RequestBody @Validated BookingDto bookingDto) {
+		log.info("Получен POST-запрос /bookings {} ", bookingDto);
+		ResponseEntity<Object> response = bookingClient.saveBooking(userId, bookingDto);
+		log.info("Ответ на запрос: {}", response);
+		return response;
 	}
 
-	@PostMapping
-	public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") long userId,
-			@RequestBody @Valid BookItemRequestDto requestDto) {
-		log.info("Creating booking {}, userId={}", requestDto, userId);
-		return bookingClient.bookItem(userId, requestDto);
+	@PatchMapping("/{bookingId}")
+	public ResponseEntity<Object> updateBooking(@RequestHeader(name = USER_ID_HEADER)
+															 @Min(value = 1, message = "User ID must be more than 0")
+															 Long userId,
+											 @PathVariable Long bookingId,
+											 @RequestParam boolean approved) {
+		log.info("Получен PATCH-запрос /bookingId подтверждения/отмены бронирования");
+		ResponseEntity<Object> response = bookingClient.updateBooking(userId, bookingId, approved);
+		log.info("Ответ на запрос: {}", response);
+		//return toBookingDto(bookingService.confirmOrCancelBooking(userId, bookingId, approved));
+		return response;
 	}
 
 	@GetMapping("/{bookingId}")
-	public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") long userId,
-			@PathVariable Long bookingId) {
-		log.info("Get booking {}, userId={}", bookingId, userId);
-		return bookingClient.getBooking(userId, bookingId);
-	}}
+	public ResponseEntity<Object> getBookingForOwnerOrBooker(@RequestHeader(name = USER_ID_HEADER)
+																 @Min(value = 1, message = "User ID must be more than 0")
+																 Long userId,
+												 @PathVariable  @Min(value = 0,
+														 message = "Booking ID must be more than 0") Long bookingId) {
+		log.info("Получен GET-запрос просмотра бронирования владельцем предмета или" +
+				" пользователем, бронирующим предмет");
+		ResponseEntity<Object> response = bookingClient.getBooking(userId,bookingId);
+		//return toBookingDto(bookingService.getBookingForOwnerOrBooker(userId, bookingId));
+		return response;
+	}
+
+	@GetMapping
+	public ResponseEntity<Object> getAllBookingsForBooker(@RequestHeader(name = USER_ID_HEADER)
+															  @Min(value = 1, message = "User ID must be more than 0")
+															  Long userId,
+													@RequestParam(defaultValue = "ALL") String stateParam,
+													@RequestParam(required = false, defaultValue = "0") @Min(value = 0,
+															message = "Parameter 'from' must be more than 0") int from,
+													@RequestParam(required = false, defaultValue = "10") @Min(value = 0,
+															message = "Parameter 'size' must be more than 0") int size) {
+		log.info("Получен GET-запрос просмотра всех забронированных вещей и статусов их бронирования " +
+				"для  пользователя");
+		State state = State.from(stateParam)
+				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+		log.info("Looking for bookings of owner {} with state {}", userId, stateParam);
+		ResponseEntity<Object> response = bookingClient.getOwnerBookings(userId, state, from, size);
+//		return bookingService.getAllBookingsForUser(userId, state, false, from, size).stream()
+//				.map(BookingMapper::toBookingDto)
+//				.collect(Collectors.toList());
+		return  response;
+	}
+
+	@GetMapping("/owner")
+	public ResponseEntity<Object> getAllBookingsForOwner(@RequestHeader(name = USER_ID_HEADER)
+															 @Min(value = 1, message = "User ID must be more than 0")
+															 Long ownerId,
+														 @RequestParam(defaultValue = "ALL") String stateParam,
+														 @RequestParam(required = false, defaultValue = "0")
+															 @Min(value = 0, message = "Parameter 'from' must be more than 0") int from,
+														 @RequestParam(required = false, defaultValue = "10") @Min(value = 0,
+																 message = "Parameter 'size' must be more than 0") int size) {
+		log.info("Получен GET-запрос просмотра всех забронированных вещей и статусов их бронирования " +
+				"для владельца");
+		State state = State.from(stateParam)
+				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+		ResponseEntity<Object> response = bookingClient.getUserBookings(ownerId, state, from,size);
+//		return bookingService.getAllBookingsForUser(userId, state, true, from, size).stream()
+//				.map(BookingMapper::toBookingDto)
+//				.collect(Collectors.toList());
+		return  response;
+	}
+
+//	@GetMapping
+//	public ResponseEntity<Object> getBookings(@RequestHeader("X-Sharer-User-Id") Long userId,
+//			@RequestParam(name = "state", defaultValue = "all") String stateParam,
+//			@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+//			@Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+//		BookingState state = BookingState.from(stateParam)
+//				.orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+//		log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
+//		return bookingClient.getBookings(userId, state, from, size);
+//	}
+//
+//	@PostMapping
+//	public ResponseEntity<Object> bookItem(@RequestHeader("X-Sharer-User-Id") Long userId,
+//			@RequestBody @Valid BookItemRequestDto requestDto) {
+//		log.info("Creating booking {}, userId={}", requestDto, userId);
+//		return bookingClient.bookItem(userId, requestDto);
+//	}
+//
+//	@GetMapping("/{bookingId}")
+//	public ResponseEntity<Object> getBooking(@RequestHeader("X-Sharer-User-Id") Long userId,
+//			@PathVariable Long bookingId) {
+//		log.info("Get booking {}, userId={}", bookingId, userId);
+//		return bookingClient.getBooking(userId, bookingId);
+//	}
+}

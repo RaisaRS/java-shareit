@@ -7,12 +7,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.request.dto.RequestDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(controllers = ItemRequestController.class)
+@WebMvcTest(controllers = RequestController.class)
 class ItemRequestClientTest {
 
     @Autowired
@@ -28,7 +29,7 @@ class ItemRequestClientTest {
     @Test
     void testValidateAddRequest() throws Exception {
 
-        RequestDTO requestIn = RequestDTO.builder()
+        RequestDto requestIn = RequestDto.builder()
                 .build();
 
         mockMvc.perform(post("/requests")

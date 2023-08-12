@@ -7,6 +7,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.item.dto.ItemDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -26,7 +27,7 @@ class ItemClientTest {
     @Test
     void testValidateItemEpmtyName() throws Exception {
 
-        ItemDTO itemDto = ItemDTO.builder()
+        ItemDto itemDto = ItemDto.builder()
                 .name("")
                 .description("item description")
                 .available(true)
@@ -45,7 +46,7 @@ class ItemClientTest {
     @Test
     void testValidateItemEpmtyDescription() throws Exception {
 
-        ItemDTO itemDto = ItemDTO.builder()
+        ItemDto itemDto = ItemDto.builder()
                 .name("item name")
                 .description("")
                 .available(true)

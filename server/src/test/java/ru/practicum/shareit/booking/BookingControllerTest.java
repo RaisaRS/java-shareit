@@ -5,18 +5,19 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.booking.dto.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.util.ErrorHandler;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -34,8 +35,9 @@ import static ru.practicum.shareit.mappers.BookingMapper.toBooking;
 import static ru.practicum.shareit.mappers.BookingMapper.toBookingDto;
 import static ru.practicum.shareit.mappers.ItemMapper.toItem;
 
+//@SpringBootTest
 @SpringBootTest
-@AutoConfigureMockMvc
+@ContextConfiguration(classes = {BookingController.class, ErrorHandler.class})
 public class BookingControllerTest {
 
     @Autowired

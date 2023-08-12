@@ -9,19 +9,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.booking.dto.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.comment.dto.CommentMapper;
+import ru.practicum.shareit.item.comment.dto.CommentMapper;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
-import ru.practicum.shareit.exceptions.BadRequestException;
+import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.mappers.BookingMapper;
 import ru.practicum.shareit.mappers.ItemMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -33,7 +35,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static ru.practicum.shareit.comment.dto.CommentMapper.toCommentDto;
+import static ru.practicum.shareit.item.comment.dto.CommentMapper.toComment;
+import static ru.practicum.shareit.item.comment.dto.CommentMapper.toCommentDto;
+
 
 @Service
 @Slf4j
@@ -110,7 +114,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         if ((from < 0 || size < 0 || (from == 0 && size == 0))) {
-            throw new BadRequestException(HttpStatus.BAD_REQUEST, "Неправильный параметр пагинации");
+            throw new MethodArgumentNotValidException(HttpStatus.BAD_REQUEST, "Неправильный параметр пагинации");
         }
         Pageable pageable = PageRequest.of(from / size, size);
         if (itemRepository.findAllByOwnerId(userId, pageable) == null) {
@@ -137,7 +141,7 @@ public class ItemServiceImpl implements ItemService {
         }
         String textToLowerCase = text.toLowerCase();
         if ((from < 0 || size < 0 || (from == 0 && size == 0))) {
-            throw new BadRequestException(HttpStatus.BAD_REQUEST, "Неправильный параметр пагинации");
+            throw new MethodArgumentNotValidException(HttpStatus.BAD_REQUEST, "Неправильный параметр пагинации");
         }
         Pageable pageable;
         if (text == null || text.isEmpty()) {
@@ -158,7 +162,7 @@ public class ItemServiceImpl implements ItemService {
     public CommentDto postComment(Long userId, Long itemId, CommentDto commentDto) {
         if (commentDto.getText().isEmpty()) {
             log.debug("Комментарий не может быть пустьм");
-            throw new BadRequestException(HttpStatus.BAD_REQUEST, "Комментарий не может быть пустым");
+            throw new MethodArgumentNotValidException(HttpStatus.BAD_REQUEST, "Комментарий не может быть пустым");
         }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(HttpStatus.NOT_FOUND, "комментарий  к предмету с id = '" + itemId
@@ -177,19 +181,19 @@ public class ItemServiceImpl implements ItemService {
                         && !booking.getStatus().equals(Status.REJECTED)
                 )
                 .collect(Collectors.toList()).size() == 0) {
-            throw new BadRequestException(HttpStatus.BAD_REQUEST,
+            throw new MethodArgumentNotValidException(HttpStatus.BAD_REQUEST,
                     "Комментировать может только арендатор предмета, с наступившим началом времени бронирования " +
                             "и статусом НЕ REJECTED");
         }
 
-        Comment comment = mapper.map(commentDto, Comment.class);
+        Comment comment = toComment(user, item, commentDto, commentDto.getCreated()); //mapper.map(commentDto, Comment.class);
         comment.setItem(item);
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());
 
         commentRepository.save(comment);
 
-        return CommentMapper.toCommentDto(comment);
+        return toCommentDto(comment);
     }
 
     @Override

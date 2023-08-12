@@ -7,10 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.exceptions.BadRequestException;
+import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 import ru.practicum.shareit.exceptions.RequestNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.item.dto.ItemDtoReq;
+import ru.practicum.shareit.mappers.RequestMapper;
 import ru.practicum.shareit.request.dto.RequestDto;
 import ru.practicum.shareit.request.dto.RequestDtoWithRequest;
 import ru.practicum.shareit.request.model.Request;
@@ -22,8 +23,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static ru.practicum.shareit.mappers.RequestMapper.*;
 
 @Service
 @RequiredArgsConstructor
@@ -71,7 +70,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<RequestDtoWithRequest> getAllItemRequest(Long userId, int from, int size) {
         if ((from < 0 || size < 0 || (from == 0 && size == 0))) {
-            throw new BadRequestException(HttpStatus.BAD_REQUEST, "неверный параметр пагинации");
+            throw new MethodArgumentNotValidException(HttpStatus.BAD_REQUEST, "неверный параметр пагинации");
         }
         Pageable pageable = PageRequest.of(from / size, size);
         User requestor = userRepository.findById(userId).orElseThrow(() ->

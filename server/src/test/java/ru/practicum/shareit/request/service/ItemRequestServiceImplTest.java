@@ -1,5 +1,6 @@
 package ru.practicum.shareit.request.service;
 
+import lombok.var;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,7 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.comment.model.Comment;
-import ru.practicum.shareit.exceptions.BadRequestException;
+import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dto.RequestDto;
@@ -153,7 +154,7 @@ public class ItemRequestServiceImplTest {
     void getAllItemRequestWithWrongRequestIdTest() {
 
         var exception = assertThrows(
-                BadRequestException.class,
+                MethodArgumentNotValidException.class,
                 () -> itemRequestService.getAllItemRequest(1L, -1, 1));
         assertEquals("400 BAD_REQUEST \"неверный параметр пагинации\"", exception.getMessage());
     }

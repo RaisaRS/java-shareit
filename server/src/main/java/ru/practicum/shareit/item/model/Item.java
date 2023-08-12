@@ -38,4 +38,6 @@ public class Item {
     private List<Booking> bookings;
     @OneToMany(mappedBy = "item")
     private List<Comment> comments;
+
+
 }

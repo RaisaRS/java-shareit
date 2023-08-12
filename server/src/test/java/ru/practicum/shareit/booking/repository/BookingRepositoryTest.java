@@ -1,11 +1,13 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
-import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.enums.Status;
+import org.springframework.test.context.ContextConfiguration;
+import ru.practicum.shareit.booking.dto.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -15,13 +17,16 @@ import ru.practicum.shareit.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@Transactional
+//@Transactional
 @DataJpaTest
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@ContextConfiguration(classes = {BookingRepository.class, UserRepository.class, ItemRepository.class})
+//@WebMvcTest(value = BookingRepository.class)
 public class BookingRepositoryTest {
+
     @Autowired
     private BookingRepository bookingRepository;
     @Autowired

@@ -8,12 +8,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import ru.practicum.shareit.user.dto.UserDto;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserControllerGatway.class)
+@WebMvcTest(UserController.class)
 class UserClientTest {
 
 
@@ -30,7 +31,7 @@ class UserClientTest {
     @Test
     void createUserWithBadNameTest() throws Exception {
 
-        UserDTO userDto = UserDTO.builder()
+        UserDto userDto = UserDto.builder()
                 .name("")
                 .email("ivan@mail.ru")
                 .build();
@@ -47,7 +48,7 @@ class UserClientTest {
     @Test
     void createUserWithBadEmailTest() throws Exception {
 
-        UserDTO userDto = UserDTO.builder()
+        UserDto userDto = UserDto.builder()
                 .name("Ivan")
                 .email("@mail.ru")
                 .build();
@@ -64,7 +65,7 @@ class UserClientTest {
     @Test
     void createUserWithEmptyEmailTest() throws Exception {
         //fail name
-        UserDTO userDto = UserDTO.builder()
+        UserDto userDto = UserDto.builder()
                 .name("Ivan")
                 .email("")
                 .build();

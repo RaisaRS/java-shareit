@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.var;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,15 +8,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
-import ru.practicum.shareit.booking.enums.Status;
+import ru.practicum.shareit.booking.dto.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.comment.model.Comment;
 import ru.practicum.shareit.comment.repository.CommentRepository;
-import ru.practicum.shareit.exceptions.BadRequestException;
+import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.item.dto.CommentDto;
+
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -32,6 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static ru.practicum.shareit.item.comment.dto.CommentMapper.toCommentDto;
+import static ru.practicum.shareit.mappers.ItemMapper.toItemDto;
 
 @ExtendWith(MockitoExtension.class)
 public class ItemServiceTest {
@@ -44,7 +48,7 @@ public class ItemServiceTest {
     @Mock
     private CommentRepository commentRepository;
 
-    private ModelMapper mapper = new ModelMapper();
+    //private ModelMapper mapper = new ModelMapper();
     @InjectMocks
     private ItemServiceImpl itemService;
     private User user;
@@ -144,7 +148,7 @@ public class ItemServiceTest {
     @Test
     void saveItemWithEmptyAvailableTest() {
         item.setAvailable(null);
-        ItemDto itemDto = mapper.map(item, ItemDto.class);
+        ItemDto itemDto = toItemDto(item); //mapper.map(item, ItemDto.class);
         var exception = assertThrows(
                 UserNotFoundException.class,
                 () -> itemService.saveItem(itemDto, 999L));
@@ -183,7 +187,7 @@ public class ItemServiceTest {
 
         item.setName("Щётка для обуви updated");
         item.setDescription("Стандартная щётка для обуви updated");
-        ItemDto itemDto = mapper.map(item, ItemDto.class);
+        ItemDto itemDto = toItemDto(item); //mapper.map(item, ItemDto.class);
         Item updatedItem = itemService.updateItem(itemDto, 1L);
         assertEquals(updatedItem, item);
 
@@ -207,7 +211,8 @@ public class ItemServiceTest {
 
         when(commentRepository.save(any()))
                 .thenReturn(comment);
-        CommentDto commentDto = mapper.map(comment, CommentDto.class);
+        CommentDto commentDto = toCommentDto(comment);
+        //CommentDto commentDto = toCommentDto(comment);
         CommentDto commentDto1 = itemService.postComment(1L, 1L, commentDto);
 
         assertEquals(commentDto1, commentDto);
@@ -218,7 +223,7 @@ public class ItemServiceTest {
         booking.setBooker(user);
         item.setBookings(Collections.singletonList(booking));
 
-        CommentDto commentDto = mapper.map(comment, CommentDto.class);
+        CommentDto commentDto = toCommentDto(comment); //mapper.map(comment, CommentDto.class);
 
         var exception = assertThrows(
                 NotFoundException.class,
@@ -231,7 +236,7 @@ public class ItemServiceTest {
     @Test
     void postCommentFromWrongItemTest() {
 
-        CommentDto commentDto = mapper.map(comment, CommentDto.class);
+        CommentDto commentDto = toCommentDto(comment);//mapper.map(comment, CommentDto.class);
 
         var exception = assertThrows(
                 NotFoundException.class,
@@ -244,11 +249,11 @@ public class ItemServiceTest {
     @Test
     void addEmptyCommentTest() {
 
-        CommentDto commentDto = mapper.map(comment, CommentDto.class);
+        CommentDto commentDto = toCommentDto(comment);//mapper.map(comment, CommentDto.class);
         commentDto.setText("");
 
         var exception = assertThrows(
-                BadRequestException.class,
+                MethodArgumentNotValidException.class,
                 () -> itemService.postComment(1L, 1L, commentDto));
 
         assertEquals("400 BAD_REQUEST \"Комментарий не может быть пустым\"", exception.getMessage());
@@ -262,7 +267,7 @@ public class ItemServiceTest {
         CommentDto commentDto = new CommentDto();
         commentDto.setText("");
 
-        assertThrows(BadRequestException.class, () -> {
+        assertThrows(MethodArgumentNotValidException.class, () -> {
             itemService.postComment(userId, itemId, commentDto);
         });
     }

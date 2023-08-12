@@ -70,7 +70,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleBadRequestException(final BadRequestException e) {
+    public ErrorResponse handleBadRequestException(final MethodArgumentNotValidException e) {
         log.error("Получен статус 400 Bad request {}", e.getMessage(), e);
         return new ErrorResponse(e.getMessage(), "Неверный запрос");
     }
