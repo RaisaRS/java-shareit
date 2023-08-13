@@ -15,6 +15,5 @@ public class ItemDtoReq {
     private Long ownerId;
     private Long requestId;
     private Boolean available;
-
 }
 

@@ -34,9 +34,11 @@ public class RequestController {
     public ResponseEntity<Object> getRequests(@RequestHeader(name = USER_ID_HEADER) @Min(value = 1,
             message = "User id should be more than 0") Long userId,
                                                    @RequestParam(defaultValue = "0") @Min(value = 0,
-                                                           message = "Parameter 'from' must be more than 0") Integer from,
+                                                           message = "Parameter 'from' must be more than 0")
+                                                   Integer from,
                                                    @RequestParam(defaultValue = "10") @Min(value = 0,
-                                                           message = "Parameter 'size' must be more than 0") Integer size) {
+                                                           message = "Parameter 'size' must be more than 0")
+                                                  Integer size) {
         log.info("Получен GET-запрос от ID пользователя {} на получение списка своих запросов вместе с данными о них." +
                 " Результаты возвращаются постранично от {}, в количестве {}.", userId, from, size);
         ResponseEntity<Object> response = requestClient.requestsGet(userId, from, size);
@@ -48,9 +50,11 @@ public class RequestController {
     public ResponseEntity<Object> getAllRequests(@RequestHeader(name = USER_ID_HEADER) @Min(value = 1,
             message = "User id should be more than 0") Long userId,
                                                       @RequestParam(name = "from", defaultValue = "0") @Min(value = 0,
-                                                              message = "Parameter 'from' must be more than 0") Integer from,
+                                                              message = "Parameter 'from' must be more than 0")
+                                                      Integer from,
                                                       @RequestParam(name = "size", defaultValue = "20") @Min(value = 0,
-                                                              message = "Parameter 'size' must be more than 0") Integer size) {
+                                                              message = "Parameter 'size' must be more than 0")
+                                                     Integer size) {
         log.info("Получен GET-запрос от ID польбзователя {} на получение списка запросов, " +
                 "созданных другимим пользователями. " +
                 "Результаты возвращаются постранично от {} в количестве {}.", userId, from, size);

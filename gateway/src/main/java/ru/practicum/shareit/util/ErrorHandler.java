@@ -16,19 +16,22 @@ public class ErrorHandler {
     @ExceptionHandler({IllegalArgumentException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalArgumentException(final RuntimeException e) {
+        log.error("Получен статус Bad request {}", e.getMessage());
         return new ErrorResponse(e.getMessage(), "Недопустимый аргумент");
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        log.error("Аттеншн: используется недопустимый аргумент метода! {} ", e.getMessage());
         return new ErrorResponse(e.getMessage(), "Недопустимый аргумент метода");
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIllegalArgumentException(final IllegalArgumentException e) {
-        return new ErrorResponse(e.getMessage(), "Неправильный аргумент метода");
+        log.error("Аттеншн: Используется несоответствующий тип аргумента метода {} ", e.getMessage());
+        return new ErrorResponse(e.getMessage(), "Несоответствующий тип аргумента метода");
     }
 
     @ExceptionHandler

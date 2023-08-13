@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -12,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.Status;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.item.comment.dto.CommentMapper;
-import ru.practicum.shareit.comment.model.Comment;
-import ru.practicum.shareit.comment.repository.CommentRepository;
-import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
+import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.item.comment.dto.CommentMapper;
+import ru.practicum.shareit.item.comment.model.Comment;
+import ru.practicum.shareit.item.comment.repository.CommentRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
@@ -48,8 +47,6 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BookingRepository bookingRepository;
-
-    private final ModelMapper mapper = new ModelMapper();
 
     @Override
     @Transactional
@@ -151,7 +148,9 @@ public class ItemServiceImpl implements ItemService {
             pageable = PageRequest.of(from / size, size);
         }
         log.info("Выполнен поиск среди предметов по : {}.", text);
-        return itemRepository.findItemByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(textToLowerCase, textToLowerCase, pageable)
+        return itemRepository
+                .findItemByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(textToLowerCase,
+                        textToLowerCase, pageable)
                 .stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
@@ -186,7 +185,7 @@ public class ItemServiceImpl implements ItemService {
                             "и статусом НЕ REJECTED");
         }
 
-        Comment comment = toComment(user, item, commentDto, commentDto.getCreated()); //mapper.map(commentDto, Comment.class);
+        Comment comment = toComment(user, item, commentDto, commentDto.getCreated());
         comment.setItem(item);
         comment.setAuthor(user);
         comment.setCreated(LocalDateTime.now());

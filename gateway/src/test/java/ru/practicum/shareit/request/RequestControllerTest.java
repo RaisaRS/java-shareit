@@ -64,19 +64,6 @@ public class RequestControllerTest {
                 .andExpect(status().isOk());
     }
 
-//    @SneakyThrows
-//    @Test
-//    public void addRequest_WrongUserId() {
-//        Long wrongUserId = -999L;
-//
-//        mockMvc.perform(post("/requests")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(objectMapper.writeValueAsString(requestDto))
-//                        .header("X-Sharer-User-Id", wrongUserId))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(requestClient, never()).addItemRequest(anyLong(), any()); //client
-//    }
 
     @SneakyThrows
     @Test
@@ -111,29 +98,7 @@ public class RequestControllerTest {
                 .andExpect(status().isOk());
     }
 
-//    @SneakyThrows
-//    @Test
-//    public void findRequest_WrongUserId() {
-//        Long wrongUserId = -999L;
-//
-//        mockMvc.perform(get("/requests/" + requestId)
-//                        .header("X-Sharer-User-Id", wrongUserId))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(requestClient, never()).getRequestById(anyLong(), anyLong());
-//    }
 
-//    @SneakyThrows
-//    @Test
-//    public void findRequest_WrongRequestId() {
-//        long wrongRequestId = -999;
-//
-//        mockMvc.perform(get("/requests/" + wrongRequestId)
-//                        .header("X-Sharer-User-Id", userId))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(requestClient, never()).getRequestById(anyLong(), anyLong());
-//    }
 
     @SneakyThrows
     @Test
@@ -148,19 +113,6 @@ public class RequestControllerTest {
                 .andExpect(status().isOk());
     }
 
-//    @SneakyThrows
-//    @Test
-//    public void getOwnRequests_WrongUserId() {
-//        Long wrongUserId = -999L;
-//
-//        mockMvc.perform(get("/requests")
-//                        .header("X-Sharer-User-Id", wrongUserId)
-//                        .param("from", from.toString())
-//                        .param("size", size.toString()))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(requestClient, never()).requestsGet(anyLong(), anyInt(), anyInt());
-//    }
 
     @SneakyThrows
     @Test
@@ -188,27 +140,6 @@ public class RequestControllerTest {
                 .andExpect(status().isOk());
     }
 
-//    @SneakyThrows
-//    @Test
-//    public void getOwnRequests_WrongFromAndSize() {
-//        Long wrongFrom = -999L;
-//
-//        mockMvc.perform(get("/requests")
-//                        .header("X-Sharer-User-Id", userId)
-//                        .param("from", wrongFrom.toString())
-//                        .param("size", size.toString()))
-//                .andExpect(status().isBadRequest());
-//
-//        Long wrongSize = -999L;
-//
-//        mockMvc.perform(get("/requests")
-//                        .header("X-Sharer-User-Id", userId)
-//                        .param("from", from.toString())
-//                        .param("size", wrongSize.toString()))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(requestClient, never()).requestsGet(anyLong(), anyInt(), anyInt());
-//    }
 
     @SneakyThrows
     @Test
@@ -222,20 +153,6 @@ public class RequestControllerTest {
                         .param("size", size.toString()))
                 .andExpect(status().isOk());
     }
-
-//    @SneakyThrows
-//    @Test
-//    public void getRequests_WrongUserId() {
-//        Long wrongUserId = -999L;
-//
-//        mockMvc.perform(get("/requests/all")
-//                        .header("X-Sharer-User-Id", wrongUserId)
-//                        .param("from", from.toString())
-//                        .param("size", size.toString()))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(requestClient, never()).getRequestsAll(anyLong(), anyInt(), anyInt());
-//    }
 
     @SneakyThrows
     @Test
@@ -262,26 +179,4 @@ public class RequestControllerTest {
                         .param("size", ""))
                 .andExpect(status().isOk());
     }
-
-//    @SneakyThrows
-//    @Test
-//    public void getRequests_WrongFromAndSize() {
-//        Long wrongFrom = -999L;
-//
-//        mockMvc.perform(get("/requests/all")
-//                        .header("X-Sharer-User-Id", userId)
-//                        .param("from", wrongFrom.toString())
-//                        .param("size", size.toString()))
-//                .andExpect(status().isBadRequest());
-//
-//        Long wrongSize = -999L;
-//
-//        mockMvc.perform(get("/requests/all")
-//                        .header("X-Sharer-User-Id", userId)
-//                        .param("from", from.toString())
-//                        .param("size", wrongSize.toString()))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(requestClient, never()).getRequestsAll(anyLong(), anyInt(), anyInt());
-//    }
 }

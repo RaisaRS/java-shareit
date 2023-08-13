@@ -12,13 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import ru.practicum.shareit.booking.dto.Status;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.comment.model.Comment;
-import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.exceptions.MethodArgumentNotValidException;
 import ru.practicum.shareit.exceptions.NotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.item.comment.model.Comment;
+import ru.practicum.shareit.item.comment.repository.CommentRepository;
 import ru.practicum.shareit.item.dto.CommentDto;
-
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -49,7 +48,6 @@ public class ItemServiceTest {
     @Mock
     private CommentRepository commentRepository;
 
-    //private ModelMapper mapper = new ModelMapper();
     @InjectMocks
     private ItemServiceImpl itemService;
     private User user;
@@ -148,7 +146,7 @@ public class ItemServiceTest {
     @Test
     void saveItemWithEmptyAvailableTest() {
         item.setAvailable(null);
-        ItemDto itemDto = toItemDto(item); //mapper.map(item, ItemDto.class);
+        ItemDto itemDto = toItemDto(item);
         var exception = assertThrows(
                 UserNotFoundException.class,
                 () -> itemService.saveItem(itemDto, 999L));
@@ -186,7 +184,7 @@ public class ItemServiceTest {
 
         item.setName("Щётка для обуви updated");
         item.setDescription("Стандартная щётка для обуви updated");
-        ItemDto itemDto = toItemDto(item); //mapper.map(item, ItemDto.class);
+        ItemDto itemDto = toItemDto(item);
         Item updatedItem = itemService.updateItem(itemDto, 1L);
         assertEquals(updatedItem, item);
 
@@ -194,7 +192,9 @@ public class ItemServiceTest {
 
     @Test
     void searchItemNullTest() {
-        when(itemRepository.findItemByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(any(), any(), any()))
+        when(itemRepository
+                .findItemByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(
+                        any(), any(), any()))
                 .thenReturn(Page.empty());
 
         assertEquals(List.of(), itemService.searchItem("".toLowerCase(), 0, 20));
@@ -213,7 +213,6 @@ public class ItemServiceTest {
         when(commentRepository.save(any()))
                 .thenReturn(comment);
         CommentDto commentDto = toCommentDto(comment);
-        //CommentDto commentDto = toCommentDto(comment);
         CommentDto commentDto1 = itemService.postComment(1L, 1L, commentDto);
 
         commentDto.setId(commentDto1.getId());
@@ -225,7 +224,7 @@ public class ItemServiceTest {
         booking.setBooker(user);
         item.setBookings(Collections.singletonList(booking));
 
-        CommentDto commentDto = toCommentDto(comment); //mapper.map(comment, CommentDto.class);
+        CommentDto commentDto = toCommentDto(comment);
 
         var exception = assertThrows(
                 NotFoundException.class,
@@ -238,7 +237,7 @@ public class ItemServiceTest {
     @Test
     void postCommentFromWrongItemTest() {
 
-        CommentDto commentDto = toCommentDto(comment);//mapper.map(comment, CommentDto.class);
+        CommentDto commentDto = toCommentDto(comment);
 
         var exception = assertThrows(
                 NotFoundException.class,
@@ -251,7 +250,7 @@ public class ItemServiceTest {
     @Test
     void addEmptyCommentTest() {
 
-        CommentDto commentDto = toCommentDto(comment);//mapper.map(comment, CommentDto.class);
+        CommentDto commentDto = toCommentDto(comment);
         commentDto.setText("");
 
         var exception = assertThrows(

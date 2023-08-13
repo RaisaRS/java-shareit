@@ -29,8 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.practicum.shareit.mappers.ItemMapper.toItem;
 
-//@SpringBootTest
-//@AutoConfigureMockMvc
 @WebMvcTest
 @ContextConfiguration(classes = {ItemController.class, ErrorHandler.class})
 public class ItemControllerTest {

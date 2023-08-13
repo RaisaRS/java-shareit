@@ -56,10 +56,12 @@ public interface BookingRepository extends PagingAndSortingRepository<Booking, L
     @Query("SELECT b FROM Booking b JOIN b.booker bb " +
             "WHERE bb.id = ?1 AND (b.start <= ?2 AND b.end >= ?2)" +
             " ORDER BY b.start DESC")
-    List<Booking> getAllCurrentBookingsByBooker(Long bookerId, LocalDateTime timeNow, LocalDateTime now1, Pageable pageable);
+    List<Booking> getAllCurrentBookingsByBooker(Long bookerId, LocalDateTime timeNow, LocalDateTime now1,
+                                                Pageable pageable);
 
     @Query("SELECT b FROM Booking b JOIN b.item i WHERE i.ownerId = ?1 " +
             "AND (b.start <= ?2 AND b.end >= ?2) " +
             "ORDER BY b.start DESC")
-    List<Booking> getAllCurrentBookingsByOwner(Long ownerId, LocalDateTime timeNow, LocalDateTime now1, Pageable pageable);
+    List<Booking> getAllCurrentBookingsByOwner(Long ownerId, LocalDateTime timeNow, LocalDateTime now1,
+                                               Pageable pageable);
 }

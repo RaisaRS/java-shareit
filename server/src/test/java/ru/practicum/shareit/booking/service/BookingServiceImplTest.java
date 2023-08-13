@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.Status;
 import ru.practicum.shareit.booking.model.Booking;
@@ -43,7 +42,6 @@ public class BookingServiceImplTest {
     private ItemRepository itemRepository;
     @Mock
     private BookingRepository bookingRepository;
-    private ModelMapper mapper = new ModelMapper();
     @InjectMocks
     private BookingServiceImpl bookingService;
     private BookingDto bookingDto;
@@ -156,7 +154,6 @@ public class BookingServiceImplTest {
 
     @Test
     void saveBookingTest() {
-        //Booking booking = mapper.map(bookingDto, Booking.class);
 
         when(userRepository.findById(1L))
                 .thenReturn(Optional.of(user));
@@ -185,7 +182,7 @@ public class BookingServiceImplTest {
     void getByBookerTest() {
         when(userRepository.existsById(any()))
                 .thenReturn(true);
-        Booking booking = toBooking(user, item, bookingDto); //mapper.map(bookingDto, Booking.class);
+        Booking booking = toBooking(user, item, bookingDto);
         booking.setItem(item);
         when(bookingRepository.findById(anyLong()))
                 .thenReturn(Optional.of(booking));

@@ -41,7 +41,7 @@ public class ItemClient extends BaseClient {
                 "from", from,
                 "size", size
         );
-        return get("/search?text={text}&from={from}&size={size}", userId, parameters); //проверить метод
+        return get("/search?text={text}&from={from}&size={size}", userId, parameters);
     }
 
     public ResponseEntity<Object> saveItem(ItemDto itemDto, Long userId) { //проверить
@@ -61,6 +61,6 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> postComment(Long userId, Long itemId, CommentDto commentDto) {
-        return post("/" + itemId + "/comment", userId, commentDto); // поправить мапперы
+        return post("/" + itemId + "/comment", userId, commentDto);
     }
 }

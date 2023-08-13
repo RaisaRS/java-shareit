@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest
 @ContextConfiguration(classes = {BookingController.class, ErrorHandler.class})
-//@SpringBootTest(classes = ShareItGateway.class)
 public class BookingControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
@@ -357,5 +356,4 @@ public class BookingControllerTest {
 
         verify(bookingClient, never()).updateBooking(anyLong(), anyLong(), anyBoolean());
     }
-
 }

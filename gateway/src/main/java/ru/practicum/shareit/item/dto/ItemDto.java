@@ -23,7 +23,6 @@ public class ItemDto {
     private String name;
     @NotBlank(groups = {Validation.Post.class}, message = "description не должен быть пустым")
     private String description;
-    //private Long ownerId;
     @NotNull(groups = {Validation.Post.class}, message = "available не должен отсутствовать")
     private Boolean available;
     private List<CommentDto> comments;

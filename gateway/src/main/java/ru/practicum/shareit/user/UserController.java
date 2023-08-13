@@ -28,9 +28,6 @@ public class UserController {
         log.info("Получен GET-апрос /users");
         ResponseEntity<Object> response = userClient.getAllUsers();
         log.info("Ответ на запрос: {}", response);
-       // return userService.getAllUsers().stream()
-        //        .map(UserMapper::toUserDto)
-         //       .collect(Collectors.toList());
         return response;
     }
 
@@ -46,10 +43,8 @@ public class UserController {
     @PostMapping
     public ResponseEntity<Object> saveUser(@NotNull @Validated(Validation.Post.class) @RequestBody UserDto userDto) {
         log.info("Получен POST-запрос /users {} ", userDto);
-        //User user = toUser(userDto);
         ResponseEntity<Object> response = userClient.addUser(userDto);
         log.info("Ответ на запрос: {}", response);
-        //return toUserDto(userService.saveUser(user));
         return response;
     }
 
@@ -65,11 +60,9 @@ public class UserController {
     public ResponseEntity<Object> updateUser(@NotNull @Validated(Validation.Patch.class) @RequestBody UserDto userDto,
                               @PathVariable @Min(value = 1,
                                       message = "User ID must be more than 0") Long userId) {
-        //User user = toUserWithId(userId, userDto);
         log.info("Получен PATCH-запрос /userId {} на изменение данных: {} ", userId, userDto);
         ResponseEntity<Object> response = userClient.updateUser(userId, userDto);
         log.info("Ответ на запрос: {}", response);
-        //return toUserDto(userService.updateUser(user));
         return response;
     }
 }

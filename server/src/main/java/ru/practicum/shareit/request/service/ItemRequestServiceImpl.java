@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request.service;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     private final ItemRequestRepository itemRequestRepository;
     private final UserRepository userRepository;
-    private final ModelMapper mapper = new ModelMapper();
 
     @Override
     @Transactional
@@ -79,7 +77,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<RequestDtoWithRequest> requestDtoWithRequests =
                 byOwnerId.stream()
                         .map(request -> {
-                            return RequestMapper.toRequestDtoWithRequest(request); //mapper.map(request, RequestDtoWithRequest.class);
+                            return RequestMapper.toRequestDtoWithRequest(request);
                         })
                         .collect(Collectors.toList());
         for (RequestDtoWithRequest withRequest : requestDtoWithRequests) {

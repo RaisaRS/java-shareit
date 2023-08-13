@@ -35,7 +35,6 @@ import static ru.practicum.shareit.mappers.BookingMapper.toBooking;
 import static ru.practicum.shareit.mappers.BookingMapper.toBookingDto;
 import static ru.practicum.shareit.mappers.ItemMapper.toItem;
 
-//@SpringBootTest
 @WebMvcTest
 @ContextConfiguration(classes = {BookingController.class, ErrorHandler.class})
 public class BookingControllerTest {
